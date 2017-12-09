@@ -1,0 +1,25 @@
+- states
+- transition
+- event
+
+
+
+
+event triggers a trinsition and transition change state of object from one to another.
+
+we can add functionality checks
+1- before transition
+2- after transition
+3- our validation checks that object must have.
+
+
+
+file
+
+- serial_no
+- owner
+- assignee
+- belongs to owner, class: user
+- belongs to assignee, class: user
+- 
+- state

@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
+  resources :regions
+  resources :categories
+  get 'homes/index'
+
   devise_for :users
-  root "tasks#index"
-  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  root "homes#index"
 end

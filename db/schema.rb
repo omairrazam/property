@@ -10,10 +10,53 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171209062106) do
+ActiveRecord::Schema.define(version: 20171209231739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.integer "base_amount"
+    t.integer "size"
+    t.integer "unit"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "installments", force: :cascade do |t|
+    t.integer "amount"
+    t.datetime "target_date"
+    t.bigint "plot_file_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["plot_file_id"], name: "index_installments_on_plot_file_id"
+  end
+
+  create_table "plot_files", force: :cascade do |t|
+    t.text "serial_no"
+    t.string "state"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "regions", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.string "unique_id"
+    t.string "temporary_id"
+    t.bigint "plot_file_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.float "total_amount"
+    t.float "recieved_amount"
+    t.datetime "target_date"
+    t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -37,4 +80,6 @@ ActiveRecord::Schema.define(version: 20171209062106) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "installments", "plot_files"
+  add_foreign_key "transactions", "plot_files"
 end

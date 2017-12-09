@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  name: MyString
+  base_amount: 1
+  size: 1
+  unit: 1
+
+two:
+  name: MyString
+  base_amount: 1
+  size: 1
+  unit: 1
