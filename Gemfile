@@ -58,3 +58,4 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'state_machine', '~> 1.2'
 gem 'state_machines-activerecord'
 gem "font-awesome-rails"
+

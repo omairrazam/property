@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171209231739) do
+ActiveRecord::Schema.define(version: 20171209233928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -55,6 +55,7 @@ ActiveRecord::Schema.define(version: 20171209231739) do
     t.float "total_amount"
     t.float "recieved_amount"
     t.datetime "target_date"
+    t.integer "status"
     t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
   end
 
