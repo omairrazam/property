@@ -19,19 +19,35 @@
  editor = new $.fn.dataTable.Editor( {
         ajax: {
             create: {
-                type: 'POST',
-                url:  '/categories'
+                url:  '/categories',
+                'contentType': "application/json",
+                'type': 'POST',
+                'data': function ( d ) {
+                    var data = {category: d['data'][0]};
+                    return JSON.stringify( data );
+                },
+
             },
             edit: {
                 type: 'PUT',
-                url:  '/categories.json?id=_id_'
+                url:  '/categories/_id_.json',
+                'data': function ( d ) {
+                    console.log(d);
+                    var id;
+                    for (var i in d.data) {
+                      id = i;
+                    }
+                    var data = {category: d.data[i]};
+                    return data;
+                }
             },
             remove: {
                 type: 'DELETE',
-                url:  'categories.json?id=_id_'
+                url:  'categories/_id_.json'
             }
         },
         table: "#datatable_categories",
+        idSrc:  'id',
         fields: [ {
                 label: "Name",
                 name: "name"
@@ -54,6 +70,7 @@
     $('#datatable_categories').DataTable( {
         dom: "Bfrtip",
         ajax: {'url': "/categories.json", "dataSrc":''},
+       
         columns: [
             { data: "name" },
             { data: "base_amount" },
