@@ -1,3 +1,3 @@
 class Category < ApplicationRecord
-	has_many :base_amounts
+	has_many :base_amounts, dependent: :destroy
 end

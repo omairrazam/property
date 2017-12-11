@@ -10,7 +10,7 @@ $(function(){
     editor = new $.fn.dataTable.Editor( {
         ajax: {
             create: {
-                url:  '/categories',
+                url:  '/'+entity,
                 'contentType': "application/json",
                 'type': 'POST',
                 'data': function ( d ) {
@@ -21,9 +21,8 @@ $(function(){
             },
             edit: {
                 type: 'PUT',
-                url:  '/categories/_id_.json',
+                url:  '/'+entity+'/_id_.json',
                 'data': function ( d ) {
-                    console.log(d);
                     var id;
                     for (var i in d.data) {
                       id = i;
@@ -34,7 +33,7 @@ $(function(){
             },
             remove: {
                 type: 'DELETE',
-                url:  'categories/_id_.json'
+                url:  entity+'/_id_.json'
             }
         },
         table: divIdName,
@@ -56,7 +55,7 @@ $(function(){
 
     $(divIdName).DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/categories.json", "dataSrc":''},
+        ajax: {'url': "/"+entity+".json", "dataSrc":''},
         "bJQueryUI": true,
         columns: [
             { data: "name" },
