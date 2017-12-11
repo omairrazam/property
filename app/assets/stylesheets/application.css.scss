@@ -15,3 +15,7 @@
  *= require_self
  */
 
+.navbar-static-top {
+    z-index: 1; 
+    border-width: 0 0 1px;
+}
