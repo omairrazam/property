@@ -1,12 +1,18 @@
 class ApplicationController < ActionController::Base
-  #protect_from_forgery with: :exception
+#  protect_from_forgery with: :exception
+#  skip_before_action :verify_authenticity_token
   before_action :authenticate_user!
   before_action :configure_permitted_parameters, if: :devise_controller?
 
-  def configure_permitted_parameters
-    devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:username, :email, :password,
-        :password_confirmation, :cnic, :address, :phone, :avatar, :avatar_cache, :remove_avatar) }
-    devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:username, :email, :password,
-        :password_confirmation, :cnic, :address, :phone, :current_password, :avatar, :avatar_cache, :remove_avatar) }
+
+    def configure_permitted_parameters
+      devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:username, :email, :password,
+          :password_confirmation, :cnic, :address, :phone, :avatar, :avatar_cache, :remove_avatar) }
+      devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:username, :email, :password,
+          :password_confirmation, :cnic, :address, :phone, :current_password, :avatar, :avatar_cache, :remove_avatar) }
+    end
+    
+    def after_sign_up_path_for(user)
+      '/users' # replace with the path you want
+    end
   end
-end
