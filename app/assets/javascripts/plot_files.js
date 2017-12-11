@@ -1,67 +1,59 @@
-
+var entity = 'plot_files';
+var controller_key = 'plot_file';
 
 $(function(){
     var editor; // use a global for the submit and return data rendering in the examples
 
-    var entity = 'categories';
-    var controller_key = 'category';
-    var divIdName = '#datatable_categories';
-
     editor = new $.fn.dataTable.Editor( {
         ajax: {
             create: {
-                url:  '/categories',
+                url:  '/'+entity,
                 'contentType': "application/json",
                 'type': 'POST',
                 'data': function ( d ) {
-                    var data = {category: d['data'][0]};
+                    var data= {};
+                    data[controller_key] = d['data'][0];
+                    
                     return JSON.stringify( data );
                 },
 
             },
             edit: {
                 type: 'PUT',
-                url:  '/categories/_id_.json',
+                url:  '/'+entity+'/_id_.json',
                 'data': function ( d ) {
-                    console.log(d);
                     var id;
                     for (var i in d.data) {
                       id = i;
                     }
-                    var data = {category: d.data[i]};
+
+                    var data={};
+                    data[controller_key] = d['data'][i];
+
                     return data;
                 }
             },
             remove: {
                 type: 'DELETE',
-                url:  'categories/_id_.json'
+                url:  ''+entity+'/_id_.json'
             }
         },
-        table: divIdName,
+        table: "#datatable_files",
         idSrc:  'id',
         fields: [ {
-                label: "Name",
-                name: "name"
-            },
-            {
-                label: "Size:",
-                name: "size"
-            },
-            {
-                label: "Unit:",
-                name: "unit"
+                label: "Serial#",
+                name: "serial_no"
             }
         ]
     } );
-
-    $(divIdName).DataTable( {
+ 
+    $('#datatable_files').DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/categories.json", "dataSrc":''},
-        "bJQueryUI": true,
+        ajax: {'url': "/"+entity+".json", "dataSrc":''},
+       "bJQueryUI": true,
         columns: [
-            { data: "name" },
-            { data: "size" },
-            { data: "unit" },
+            { data: "serial_no" },
+           
         ],
         select: true,
         buttons: [

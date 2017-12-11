@@ -10,14 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171209233928) do
+ActiveRecord::Schema.define(version: 20171211032409) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "base_amounts", force: :cascade do |t|
+    t.integer "amount"
+    t.datetime "tareekh"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "category_id"
+    t.index ["category_id"], name: "index_base_amounts_on_category_id"
+  end
+
   create_table "categories", force: :cascade do |t|
     t.string "name"
-    t.integer "base_amount"
     t.integer "size"
     t.integer "unit"
     t.datetime "created_at", null: false
@@ -81,6 +89,7 @@ ActiveRecord::Schema.define(version: 20171209233928) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "base_amounts", "categories"
   add_foreign_key "installments", "plot_files"
   add_foreign_key "transactions", "plot_files"
 end
