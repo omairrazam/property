@@ -69,6 +69,6 @@ class PlotFilesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def plot_file_params
-      params.require(:plot_file).permit(:serial_no)
+      params.require(:plot_file).permit(:serial_no, :category_id)
     end
 end

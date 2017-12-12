@@ -43,17 +43,22 @@ $(function(){
         fields: [ {
                 label: "Serial#",
                 name: "serial_no"
+            },
+            {
+                label: "Category:",
+                name: "category_id",
+                type: 'select'
             }
         ]
     } );
  
     $('#datatable_files').DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json", "dataSrc":''},
+        ajax: {'url': "/"+entity+".json"},
        "bJQueryUI": true,
         columns: [
             { data: "serial_no" },
-           
+            { data: "category.fullname"}
         ],
         select: true,
         buttons: [

@@ -15,7 +15,6 @@ $(function(){
                 'data': function ( d ) {
                     var data= {};
                     data[controller_key] = d['data'][0];
-                    
                     return JSON.stringify( data );
                 },
 
@@ -42,20 +41,25 @@ $(function(){
         },
         table: divIdName,
         idSrc:  'id',
-        fields: [ {
-                label: "Amount",
+        fields: [ 
+            {
+                label: "Amount:",
                 name: "total_amount"
+            },
+            {
+                label: "File:",
+                name: "plot_file_id",
+                type: 'select'
             }
         ]
     } );
  
     $(divIdName).DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json", "dataSrc":''},
-       "bJQueryUI": true,
+        ajax: {'url': "/"+entity+".json"},
         columns: [
-            { data: "total_amount" },
-           
+            { data: "total_amount"},
+            { data: "plot_file.serial_no"}
         ],
         select: true,
         buttons: [
