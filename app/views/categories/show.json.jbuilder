@@ -1,1 +1,1 @@
-json.data [@category]
+json.data [@category],partial: 'categories/category', as: :category

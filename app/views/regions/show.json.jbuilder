@@ -1,1 +1,3 @@
-json.partial! "regions/region", region: @region
+json.data [@region]
+json.data [@region],partial: 'regions/region', as: :region
+
