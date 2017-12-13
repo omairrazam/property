@@ -15,9 +15,12 @@ $(function(){
                 'type': 'POST',
                 'data': function ( d ) {
                     var data = {category: d['data'][0]};
+                    if(data.category.unit == -1){
+                        data.category.unit = '';
+                    }
                     return JSON.stringify( data );
                 },
-
+                error: datatableAjaxError
             },
             edit: {
                 type: 'PUT',
@@ -28,12 +31,17 @@ $(function(){
                       id = i;
                     }
                     var data = {category: d.data[i]};
+                    if(data.category.unit == -1){
+                        data.category.unit = '';
+                    }
                     return data;
-                }
+                },
+                error: datatableAjaxError
             },
             remove: {
                 type: 'DELETE',
-                url:  entity+'/_id_.json'
+                url:  entity+'/_id_.json',
+                error: datatableAjaxError
             }
         },
         table: divIdName,
@@ -48,19 +56,20 @@ $(function(){
             },
             {
                 label: "Unit:",
-                name: "unit"
+                name: "unit",
+                type: "select",
+                def: -1
             }
         ]
     } );
 
     $(divIdName).DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json", "dataSrc":''},
+        ajax: {'url': "/"+entity+".json"},
         "bJQueryUI": true,
         columns: [
             { data: "name" },
-            { data: "size" },
-            { data: "unit" },
+            { data: "dim" },
         ],
         select: true,
         buttons: [

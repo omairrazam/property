@@ -17,6 +17,7 @@ $(function(){
                     data[controller_key] = d['data'][0];
                     return JSON.stringify( data );
                 },
+                error: datatableAjaxError
 
             },
             edit: {
@@ -32,11 +33,13 @@ $(function(){
                     data[controller_key] = d['data'][i];
 
                     return data;
-                }
+                },
+                error: datatableAjaxError
             },
             remove: {
                 type: 'DELETE',
-                url:  ''+entity+'/_id_.json'
+                url:  ''+entity+'/_id_.json',
+                error: datatableAjaxError
             }
         },
         table: divIdName,
