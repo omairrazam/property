@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  resources :installments
   resources :transactions
   resources :plot_files
   resources :regions

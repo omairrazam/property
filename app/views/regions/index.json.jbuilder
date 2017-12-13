@@ -1,1 +1,1 @@
-json.array! @regions, partial: 'regions/region', as: :region
+json.data @regions, partial: 'regions/region', as: :region
