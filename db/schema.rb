@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171213225219) do
+ActiveRecord::Schema.define(version: 20171214013713) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -69,6 +69,7 @@ ActiveRecord::Schema.define(version: 20171213225219) do
     t.datetime "target_date"
     t.integer "status"
     t.bigint "user_id"
+    t.integer "mode"
     t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
     t.index ["user_id"], name: "index_transactions_on_user_id"
   end
