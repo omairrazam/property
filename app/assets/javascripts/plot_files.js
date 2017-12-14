@@ -51,6 +51,11 @@ $(function(){
                 label: "Category:",
                 name: "category_id",
                 type: 'select'
+            },
+            {
+                label: "Region:",
+                name: "region_id",
+                type: 'select'
             }
         ]
     } );
@@ -61,7 +66,9 @@ $(function(){
        "bJQueryUI": true,
         columns: [
             { data: "serial_no" },
-            { data: "category.fullname"}
+            { data: "category.fullname"},
+            { data: "region.title"},
+            { data: "state"}
         ],
         select: true,
         buttons: [

@@ -24,6 +24,8 @@ class TransactionsController < ApplicationController
   # POST /transactions
   # POST /transactions.json
   def create
+#    Rails.logger.debug params
+#    exit
     @transaction = Transaction.new(transaction_params)
 
     respond_to do |format|

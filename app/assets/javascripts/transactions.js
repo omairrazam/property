@@ -1,5 +1,3 @@
-
-
 $(function(){
     var editor; // use a global for the submit and return data rendering in the examples
     var entity = 'transactions';
@@ -58,17 +56,21 @@ $(function(){
             type: 'select'
         },
         {
-            label: "Received Amount:",
-            name: "recieved_amount",
+            label: "Mode",
+            name: "mode",
             attr:{
                 type: "number"
             }
         },
         {
-            label: "Target Date:",
-            name: "target_date",
-            type: "date"
+            label: "Received Amount:",
+            name: "recieved_amount",
+            attr:{
+                type: "number"
+            }
         }
+
+
         ]
 
     } );

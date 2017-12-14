@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171212221703) do
+ActiveRecord::Schema.define(version: 20171214184216) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -43,11 +43,11 @@ ActiveRecord::Schema.define(version: 20171212221703) do
 
   create_table "plot_files", force: :cascade do |t|
     t.text "serial_no"
-    t.string "state"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "category_id"
     t.bigint "region_id"
+    t.integer "state"
     t.index ["category_id"], name: "index_plot_files_on_category_id"
     t.index ["region_id"], name: "index_plot_files_on_region_id"
   end
@@ -68,7 +68,10 @@ ActiveRecord::Schema.define(version: 20171212221703) do
     t.float "recieved_amount"
     t.datetime "target_date"
     t.integer "status"
+    t.bigint "user_id"
+    t.integer "mode"
     t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
+    t.index ["user_id"], name: "index_transactions_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -89,6 +92,7 @@ ActiveRecord::Schema.define(version: 20171212221703) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "avatar"
+    t.string "type"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
@@ -98,4 +102,5 @@ ActiveRecord::Schema.define(version: 20171212221703) do
   add_foreign_key "plot_files", "categories"
   add_foreign_key "plot_files", "regions"
   add_foreign_key "transactions", "plot_files"
+  add_foreign_key "transactions", "users"
 end

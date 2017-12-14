@@ -17,7 +17,7 @@ gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
 gem 'uglifier', '>= 1.3.0'
 # See https://github.com/rails/execjs#readme for more supported runtimes
-# gem 'therubyracer', platforms: :ruby
+gem 'therubyracer', platforms: :ruby
 gem 'jquery-rails', '~> 4.3', '>= 4.3.1'
 gem 'jquery-ui-rails'
 # Use CoffeeScript for .coffee assets and views
@@ -44,6 +44,8 @@ group :development, :test do
   gem 'selenium-webdriver'
 end
 
+gem 'figaro'
+
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
   gem 'web-console', '>= 3.3.0'
@@ -51,12 +53,20 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'capistrano', '~>3.4.0'
+  gem 'capistrano3-puma'
+  gem 'capistrano-rails', require: false
+  gem 'capistrano-bundler', require: false
+  gem 'capistrano-rvm'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
-gem 'state_machine', '~> 1.2'
-gem 'state_machines-activerecord'
+# gem 'state_machine', '~> 1.2'
+# gem 'state_machines-activerecord'
+gem 'stateful_enum'
 gem "font-awesome-rails"
+
+
 
