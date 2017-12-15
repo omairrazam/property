@@ -1,10 +1,13 @@
 Rails.application.routes.draw do
+
   resources :installments
+
   resources :transactions
   resources :plot_files
   resources :regions
   resources :categories
   get 'homes/index'
+
 
   devise_for :users, :skip => :registrations
 devise_scope :user do
@@ -17,5 +20,6 @@ devise_scope :user do
       get :cancel
     end
 end
+
   root "homes#index"
 end
