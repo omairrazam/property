@@ -1,2 +1,6 @@
-json.extract! transaction, :id, :total_amount, :created_at, :updated_at
-json.url transaction_url(transaction, format: :json)
+json.id transaction.id
+json.extract! transaction, :id, :plot_file_id, :total_amount, :created_at, :updated_at
+json.plot_file do 
+	json.serial_no transaction.plot_file.serial_no
+end
+

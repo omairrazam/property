@@ -1,0 +1,31 @@
+PROJECT NAME
+PIA Enclave (AZB & CHL)
+
+CATEGORIES
+1- PIA Form
+2- 5M
+3- 10M
+4- 1K
+
+REGIONS
+1- Lahore
+2- Karachi
+3- Rawalpindi
+4- Faislabad
+
+MODES OF TRANSACTIONS
+1- Cash
+2- Monday Payment
+3- Next Monday Payment
+4- BOP       (buyers option)
+5- SOP       (seller option)
+6- POD  (add POD duration setting)
+7- custom  - to be thought
+
+Reports:
+1- graph about kia paya kia khoya on daily basis
+
+
+Absolute Values
+1- mushtarqa sheet (want to see region wise) ()
+2- dues/takes of all modes of payments

@@ -1,5 +1,3 @@
-
-
 $(function(){
     var editor; // use a global for the submit and return data rendering in the examples
     var entity = 'transactions';
@@ -15,9 +13,9 @@ $(function(){
                 'data': function ( d ) {
                     var data= {};
                     data[controller_key] = d['data'][0];
-                    
                     return JSON.stringify( data );
                 },
+                error: datatableAjaxError
 
             },
             edit: {
@@ -33,29 +31,36 @@ $(function(){
                     data[controller_key] = d['data'][i];
 
                     return data;
-                }
+                },
+                error: datatableAjaxError
             },
             remove: {
                 type: 'DELETE',
-                url:  ''+entity+'/_id_.json'
+                url:  ''+entity+'/_id_.json',
+                error: datatableAjaxError
             }
         },
         table: divIdName,
         idSrc:  'id',
-        fields: [ {
-                label: "Amount",
+        fields: [ 
+            {
+                label: "Amount:",
                 name: "total_amount"
+            },
+            {
+                label: "File:",
+                name: "plot_file_id",
+                type: 'select'
             }
         ]
     } );
  
     $(divIdName).DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json", "dataSrc":''},
-       "bJQueryUI": true,
+        ajax: {'url': "/"+entity+".json"},
         columns: [
-            { data: "total_amount" },
-           
+            { data: "total_amount"},
+            { data: "plot_file.serial_no"}
         ],
         select: true,
         buttons: [

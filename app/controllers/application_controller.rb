@@ -5,6 +5,7 @@ class ApplicationController < ActionController::Base
   before_action :configure_permitted_parameters, if: :devise_controller?
 
 
+
     def configure_permitted_parameters
       devise_parameter_sanitizer.permit(:sign_up) { |u| u.permit(:username, :email, :password,
           :password_confirmation, :cnic, :address, :phone, :avatar, :avatar_cache, :remove_avatar) }
@@ -15,4 +16,13 @@ class ApplicationController < ActionController::Base
     def after_sign_up_path_for(user)
       '/users' # replace with the path you want
     end
+
+  #for enum non existing value
+  rescue_from ArgumentError, with: :handle_bad_params
+
+
+  def handle_bad_params(exception)
+  	render json: {error: exception.message}.to_json, status: 404
+  	return
+
   end

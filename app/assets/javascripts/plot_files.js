@@ -16,6 +16,7 @@ $(function(){
                     
                     return JSON.stringify( data );
                 },
+                error: datatableAjaxError
 
             },
             edit: {
@@ -31,11 +32,13 @@ $(function(){
                     data[controller_key] = d['data'][i];
 
                     return data;
-                }
+                },
+                error: datatableAjaxError
             },
             remove: {
                 type: 'DELETE',
-                url:  ''+entity+'/_id_.json'
+                url:  ''+entity+'/_id_.json',
+                error: datatableAjaxError
             }
         },
         table: "#datatable_files",
@@ -43,17 +46,29 @@ $(function(){
         fields: [ {
                 label: "Serial#",
                 name: "serial_no"
+            },
+            {
+                label: "Category:",
+                name: "category_id",
+                type: 'select'
+            },
+            {
+                label: "Region:",
+                name: "region_id",
+                type: 'select'
             }
         ]
     } );
  
     $('#datatable_files').DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json", "dataSrc":''},
+        ajax: {'url': "/"+entity+".json"},
        "bJQueryUI": true,
         columns: [
             { data: "serial_no" },
-           
+            { data: "category.fullname"},
+            { data: "region.title"},
+            { data: "state"}
         ],
         select: true,
         buttons: [
