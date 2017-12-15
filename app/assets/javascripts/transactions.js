@@ -51,6 +51,14 @@ $(function(){
                 label: "File:",
                 name: "plot_file_id",
                 type: 'select'
+            },
+            {
+                label: "Received Amount:",
+                name: "recieved_amount"
+            },
+            {
+                label: "Target Date:",
+                name: "target_date"
             }
         ]
     } );
@@ -60,7 +68,12 @@ $(function(){
         ajax: {'url': "/"+entity+".json"},
         columns: [
             { data: "total_amount"},
-            { data: "plot_file.serial_no"}
+            { data: "plot_file.serial_no"},
+            { data: "total_amount"},
+            { data: "recieved_amount"},
+            { data: "remaining_amount"},
+            { data: "target_date"}
+
         ],
         select: true,
         buttons: [

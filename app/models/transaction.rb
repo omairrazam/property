@@ -7,8 +7,10 @@ class Transaction < ApplicationRecord
   alias_attribute :point_of_contact, :user
 
   enum state: %i(pending paid)
-  enum mode: %i(cash monday_payment next_monday_payment bop sop pod custom)
+   enum mode: %i(cash monday_payment next_monday_payment bop sop pod custom)
 
+ 
+  
   private
   def figure_out_target_date
   	case mode
@@ -30,4 +32,11 @@ class Transaction < ApplicationRecord
 	  "You gave me #{a} -- I have no idea what to do with that."
 	end
   end
+  
+  def remaining_amount
+    total_amount = self.total_amount ? self.total_amount : 0
+    recieved_amount = self.recieved_amount ? self.recieved_amount : 0
+    return total_amount - recieved_amount
+  end
+  
 end
