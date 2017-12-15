@@ -16,6 +16,7 @@ $(function(){
                     
                     return JSON.stringify( data );
                 },
+                error: datatableAjaxError
 
             },
             edit: {
@@ -31,11 +32,13 @@ $(function(){
                     data[controller_key] = d['data'][i];
 
                     return data;
-                }
+                },
+                error: datatableAjaxError
             },
             remove: {
                 type: 'DELETE',
-                url:  ''+entity+'/_id_.json'
+                url:  ''+entity+'/_id_.json',
+                error: datatableAjaxError
             }
         },
         table: "#datatable_files",
@@ -48,6 +51,11 @@ $(function(){
                 label: "Category:",
                 name: "category_id",
                 type: 'select'
+            },
+            {
+                label: "Region:",
+                name: "region_id",
+                type: 'select'
             }
         ]
     } );
@@ -58,7 +66,9 @@ $(function(){
        "bJQueryUI": true,
         columns: [
             { data: "serial_no" },
-            { data: "category.fullname"}
+            { data: "category.fullname"},
+            { data: "region.title"},
+            { data: "state"}
         ],
         select: true,
         buttons: [
