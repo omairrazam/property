@@ -54,10 +54,8 @@
 
 <script type="text/javascript">
     
- var seriesOptions = [],
-    d=[],
-    seriesCounter = 0,
-    names = <%= Transaction.modes.keys.map{|t|[ t.split('_').map(&:capitalize).join(' '), t]} %>;
+ 
+
 
 
 /**
@@ -68,7 +66,7 @@ function createChart() {
 
     Highcharts.stockChart('container', {
 
-        rangeSelector: {
+        rangeSelector: {    
             selected: 4
         },
 
@@ -118,6 +116,7 @@ $(function(){
 $(function(){
     $('#daily_stocks').DataTable();
 });
+
 
 </script>
 
