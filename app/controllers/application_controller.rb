@@ -13,12 +13,13 @@ class ApplicationController < ActionController::Base
     devise_parameter_sanitizer.permit(:account_update) { |u| u.permit(:username, :email, :password,
         :password_confirmation, :cnic, :address, :phone, :current_password, :avatar, :avatar_cache, :remove_avatar) }
   end
-  
+
   def after_sign_up_path_for(user)
     '/users' # replace with the path you want
   end
 
   def handle_bad_params(exception)
   	render json: {error: exception.message}.to_json, status: 404
+
   end
 end

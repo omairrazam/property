@@ -24,7 +24,7 @@ $(function(){
                 'data': function ( d ) {
                     var id;
                     for (var i in d.data) {
-                      id = i;
+                        id = i;
                     }
 
                     var data={};
@@ -43,43 +43,82 @@ $(function(){
         table: divIdName,
         idSrc:  'id',
         fields: [ 
-            {
-                label: "Amount:",
-                name: "total_amount"
-            },
-            {
-                label: "File:",
-                name: "plot_file_id",
-                type: 'select'
-            },
-            {
-                label: "Received Amount:",
-                name: "recieved_amount"
-            },
-            {
-                label: "Target Date:",
-                name: "target_date"
+        {
+            label: "Amount:",
+            name: "total_amount",
+            attr:{
+                type: "number"
             }
+        },
+        {
+            label: "File:",
+            name: "plot_file_id",
+            type: 'select'
+        },
+        {
+            label: "Mode",
+            name: "mode",
+            attr:{
+                type: "number"
+            }
+        },
+        {
+            label: "Received Amount:",
+            name: "recieved_amount",
+            attr:{
+                type: "number"
+            }
+        }
+
+
         ]
+
     } );
- 
     $(divIdName).DataTable( {
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json"},
+        ajax: {
+            'url': "/"+entity+".json"
+        },
         columns: [
-            { data: "total_amount"},
-            { data: "plot_file.serial_no"},
-            { data: "total_amount"},
-            { data: "recieved_amount"},
-            { data: "remaining_amount"},
-            { data: "target_date"}
+        {
+            data: "total_amount"
+        },
+
+        {
+            data: "plot_file.serial_no"
+        },
+
+        {
+            data: "total_amount"
+        },
+
+        {
+            data: "recieved_amount"
+        },
+
+        {
+            data: "remaining_amount"
+        },
+
+        {
+            data: "target_date"
+        }
 
         ],
         select: true,
         buttons: [
-            { extend: "create", editor: editor },
-            { extend: "edit",   editor: editor },
-            { extend: "remove", editor: editor }
+        {
+            extend: "create",
+            editor: editor
+        },
+        {
+            extend: "edit",
+            editor: editor
+        },
+        {
+            extend: "remove",
+            editor: editor
+        }
         ]
     } );
 });

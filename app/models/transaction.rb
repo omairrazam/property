@@ -6,7 +6,12 @@ class Transaction < ApplicationRecord
   
   alias_attribute :point_of_contact, :user
 
+  belongs_to :user, optional: true
+  
+  
+
   enum state: %i(pending paid)
+
    enum mode: %i(cash monday_payment next_monday_payment bop sop pod custom)
 
  
@@ -38,5 +43,14 @@ class Transaction < ApplicationRecord
     recieved_amount = self.recieved_amount ? self.recieved_amount : 0
     return total_amount - recieved_amount
   end
-  
+
+end
+
+
+def amount_calculation
+  if total_amount < recieved_amount
+    errors.add(:base, "Total should be greater than recieved amount")
+  end
+end
+
 end
