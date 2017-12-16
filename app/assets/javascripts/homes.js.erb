@@ -1,7 +1,9 @@
 
  var seriesOptions = [],
+    d=[],
     seriesCounter = 0,
-    names = ['MSFT', 'AAPL', 'GOOG'];
+    names = <%= Transaction.modes.keys.map{|t|[ t.split('_').map(&:capitalize).join(' '), t]} %>;
+
 
 /**
  * Create the chart when all data is loaded
@@ -41,28 +43,23 @@ function createChart() {
             split: true
         },
 
-        series: [{name:'abc', data:[<%= Transaction.all.pluck(:created_at, :total_amount).map{|c,a|[c.to_i*1000,a]} %>]}]
+        series: d
     });
 }
 
-$.each(names, function (i, name) {
-    $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
-        
-        seriesOptions[i] = {
-            name: name,
-            data: data
-        };
-
-        // As we're loading the data asynchronously, we don't know what order it will arrive. So
-        // we keep a counter and create the chart when all the data is loaded.
-        seriesCounter += 1;
-
-        if (seriesCounter === names.length) {
-            createChart();
-        }
-    });
+$(function(){
+    d = [{name: names[0][0],data: <%= Transaction.order('created_at ASC').with_mode(:cash).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+         {name: names[1][0],data: <%= Transaction.order('created_at ASC').with_mode(:monday_payment).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+         {name: names[2][0],data: <%= Transaction.order('created_at ASC').with_mode(:next_monday_payment).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+         {name: names[3][0],data: <%= Transaction.order('created_at ASC').with_mode(:sop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+         {name: names[4][0],data: <%= Transaction.order('created_at ASC').with_mode(:bop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+         {name: names[5][0],data: <%= Transaction.order('created_at ASC').with_mode(:pod).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+    ];
+    console.log(d);
+    createChart();
+    
 });
 
 $(function(){
     $('#daily_stocks').DataTable();
-})
+});

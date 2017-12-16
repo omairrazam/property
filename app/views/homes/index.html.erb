@@ -31,7 +31,7 @@
             <tbody>
                 <% Transaction.modes.keys.each do |mode| obj = instance_variable_get("@#{mode}")%>
                     <tr>
-                        <td><%= mode.split('_').map(&:capitalize).join(' ') %></td>
+                        <td><%= beautify_display mode %></td>
                         <td><%= obj.amount_sellings %></td>
                         <td><%= obj.amount_buyings %></td>
                         <td><i class="fa fa-chevron-<%= (obj.net_amount > 0) ? 'up text-success' : 'down text-danger' %> " aria-hidden="true"></i>&nbsp;<%= obj.net_amount %> </td>
