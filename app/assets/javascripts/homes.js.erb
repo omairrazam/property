@@ -41,14 +41,13 @@ function createChart() {
             split: true
         },
 
-        series: seriesOptions
+        series: [{name:'abc', data:[<%= Transaction.all.pluck(:created_at, :total_amount).map{|c,a|[c.to_i*1000,a]} %>]}]
     });
 }
 
 $.each(names, function (i, name) {
-
     $.getJSON('https://www.highcharts.com/samples/data/jsonp.php?filename=' + name.toLowerCase() + '-c.json&callback=?',    function (data) {
-
+        
         seriesOptions[i] = {
             name: name,
             data: data
@@ -64,4 +63,6 @@ $.each(names, function (i, name) {
     });
 });
 
-
+$(function(){
+    $('#daily_stocks').DataTable();
+})

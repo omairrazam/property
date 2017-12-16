@@ -4,5 +4,10 @@ class User < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :trackable, :validatable
-  enum :type => [:client, :admin, :dealer]
+
+  enum type: %i(client admin dealer)
+
+  has_many :buyings, :class_name => 'Transaction', :foreign_key => 'buyer_id'
+  has_many :sellings, :class_name => 'Transaction', :foreign_key => 'seller_id'
+
 end

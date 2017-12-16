@@ -10,9 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-
-ActiveRecord::Schema.define(version: 20171214184216) do
-
+ActiveRecord::Schema.define(version: 20171216055017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -32,6 +30,7 @@ ActiveRecord::Schema.define(version: 20171214184216) do
     t.integer "unit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "pod_days"
   end
 
   create_table "installments", force: :cascade do |t|
@@ -66,14 +65,17 @@ ActiveRecord::Schema.define(version: 20171214184216) do
     t.bigint "plot_file_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.float "total_amount"
-    t.float "recieved_amount"
+    t.integer "total_amount", default: 0
+    t.integer "recieved_amount", default: 0
     t.datetime "target_date"
-    t.integer "status"
-    t.bigint "user_id"
     t.integer "mode"
+    t.integer "target_date_in_days"
+    t.integer "nature"
+    t.bigint "buyer_id"
+    t.bigint "seller_id"
+    t.index ["buyer_id"], name: "index_transactions_on_buyer_id"
     t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
-    t.index ["user_id"], name: "index_transactions_on_user_id"
+    t.index ["seller_id"], name: "index_transactions_on_seller_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -104,5 +106,6 @@ ActiveRecord::Schema.define(version: 20171214184216) do
   add_foreign_key "plot_files", "categories"
   add_foreign_key "plot_files", "regions"
   add_foreign_key "transactions", "plot_files"
-  add_foreign_key "transactions", "users"
+  add_foreign_key "transactions", "users", column: "buyer_id"
+  add_foreign_key "transactions", "users", column: "seller_id"
 end

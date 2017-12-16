@@ -1,4 +1,5 @@
 <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 
@@ -10,124 +11,45 @@
 </div>
 <!-- /.row -->
 <div class="row">
-    <div class="col-lg-3 col-md-6">
-        <div class="panel panel-primary">
-            <div class="panel-heading">
-                <strong>CASH</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
+
+    <div class="col-lg-6 col-md-6">
+        <div class="well">
+            <p>Total Sellings today: Rs: <%= tot_sell = Transaction.daily_sellings %></p>
+            <p>Total Buyings today: Rs: <%= tot_buy = Transaction.daily_buyings %></p>
+            <p >Net:  <span class="badge">Rs:<%= net = (tot_sell - tot_buy) %> </span></p>
         </div>
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <strong>MONDAY PAYMENT</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        <div class="panel panel-green">
-            <div class="panel-heading">
-                <strong>NEXT MONDAY PAYMENT</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <strong>BOP</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <strong>SOP</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <strong>POD</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
-        <div class="panel panel-red">
-            <div class="panel-heading">
-                <strong>CUSTOM</strong>
-            </div>
-            <div class="panel-body">
-                <div class="table-responsive">
-                    <table class='table table-striped'>
-                        <tr><td>Selling</td><td>4324</td></tr>
-                        <tr><td>Buying</td><td>123</td></tr>
-                        <tr><td>Net</td><td>123</td></tr>
-                    </table>
-                </div>
-                <div class="clearfix"></div>
-            </div>
-        </div>
+        <table id="daily_stocks" class="display" cellspacing="0" width="100%">
+            <thead>
+                <tr>
+                    <th>Mode</th>
+                    <th>Total Sellings (Rs)</th>
+                    <th>Total Buyings (Rs)</th>
+                    <th>Net (Rs)</th>
+                </tr>
+            </thead>
+                
+            <tbody>
+                <% Transaction.modes.keys.each do |mode| obj = instance_variable_get("@#{mode}")%>
+                    <tr>
+                        <td><%= mode.split('_').map(&:capitalize).join(' ') %></td>
+                        <td><%= obj.amount_sellings %></td>
+                        <td><%= obj.amount_buyings %></td>
+                        <td><i class="fa fa-chevron-<%= (obj.net_amount > 0) ? 'up text-success' : 'down text-danger' %> " aria-hidden="true"></i>&nbsp;<%= obj.net_amount %> </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
     </div>
-    <div class="col-lg-9">
+
+    <div class="col-lg-6">
         <div class="well">
             <div id="container" style="height: 400px; min-width: 310px"></div>
         </div>
     </div>
+    
 </div>
 <!-- /.row -->
 
-<div class="row">
-    
-</div>
 
 
 

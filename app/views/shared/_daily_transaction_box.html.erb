@@ -1,0 +1,17 @@
+<div class="col-lg-3 col-md-6">
+    <div class="panel <%#= header_class %>">
+        <div class="panel-heading">
+            <strong><%= obj.mode.upcase%></strong>
+        </div>
+        <div class="panel-body">
+            <div class="table-responsive">
+                <table class='table table-striped'>
+                    <tr><td>Selling</td><td>RS: <%= obj.amount_sellings %></td></tr>
+                    <tr><td>Buying</td><td>RS: <%= obj.amount_buyings %></td></tr>
+                    <tr><td>Net</td><td>RS: <%= obj.net_amount %></td></tr>
+                </table>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
