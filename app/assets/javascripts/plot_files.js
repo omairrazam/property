@@ -13,7 +13,11 @@ $(function(){
                 'data': function ( d ) {
                     var data= {};
                     data[controller_key] = d['data'][0];
-                    
+
+                    if(data[controller_key]['region_id'] == -1){
+                        data[controller_key]['region_id'] = null;
+                    }
+                   
                     return JSON.stringify( data );
                 },
                 error: datatableAjaxError
@@ -31,6 +35,11 @@ $(function(){
                     var data={};
                     data[controller_key] = d['data'][i];
 
+                    if(data[controller_key]['region_id'] == -1){
+                        data[controller_key]['region_id'] = null;
+                    }
+                   
+                   
                     return data;
                 },
                 error: datatableAjaxError

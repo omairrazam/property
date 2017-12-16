@@ -6,6 +6,8 @@
 	        <tr>
 	            <th>Name</th>
 	            <th>Size</th>
+                <th>BaseAmount</th>
+                <th>POD Days</th>
 	        </tr>
 	    </thead>
 	</table>
@@ -70,10 +72,23 @@ $(function(){
                 name: "size"
             },
             {
+                label: "POD Days:",
+                name: "pod_days",
+                attr:{
+                    type: "number"
+                }
+            },
+            {
+                label: "Base Amount:",
+                name: "base_amount",
+                attr:{
+                    type: "number"
+                }
+            },
+            {
                 label: "Unit:",
                 name: "unit",
                 type: "select",
-                def: -1
             }
         ]
     } );
@@ -85,6 +100,8 @@ $(function(){
         columns: [
             { data: "name" },
             { data: "dim" },
+            { data: "base_amount" },
+            { data: "pod_days" },
         ],
         select: true,
         buttons: [

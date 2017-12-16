@@ -8,7 +8,7 @@ class PlotFile < ApplicationRecord
 	belongs_to :category
 	belongs_to :region, optional: true
 
-	validates_presence_of :serial_no,:state,:pod_days #also validate column types e.g pod_days must be integer
+	validates_presence_of :serial_no,:state #also validate column types e.g pod_days must be integer
 
 	enum state:{pending:0, in_stock:1, open:2, assigned:3} do
 

@@ -27,7 +27,6 @@ class TransactionsController < ApplicationController
 #    Rails.logger.debug params
 #    exit
     @transaction = Transaction.new(transaction_params)
-
     respond_to do |format|
       if @transaction.save
         format.html { redirect_to @transaction, notice: 'Transaction was successfully created.' }
@@ -71,7 +70,10 @@ class TransactionsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def transaction_params
-      params.require(:transaction).permit(:total_amount, :plot_file_id,:recieved_amount,:target_date)
+      params.require(:transaction).permit(
+        :total_amount,:plot_file_id,:category_id,
+        :recieved_amount,:target_date,:buyer_id,:region_id,
+        :seller_id, :mode, :nature, :target_date_in_days
+        )
     end
-
 end

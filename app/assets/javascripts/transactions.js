@@ -13,6 +13,11 @@ $(function(){
                 'data': function ( d ) {
                     var data= {};
                     data[controller_key] = d['data'][0];
+
+                    if(data[controller_key]['category_id'] == -1){
+                        data[controller_key]['category_id'] = null;
+                    }
+
                     return JSON.stringify( data );
                 },
                 error: datatableAjaxError
@@ -30,6 +35,10 @@ $(function(){
                     var data={};
                     data[controller_key] = d['data'][i];
 
+                    if(data[controller_key]['category_id'] == -1){
+                        data[controller_key]['category_id'] = null;
+                    }
+
                     return data;
                 },
                 error: datatableAjaxError
@@ -42,22 +51,20 @@ $(function(){
         },
         table: divIdName,
         idSrc:  'id',
-        fields: [ 
+        fields: [
         {
-            label: "Amount:",
-            name: "total_amount",
-            attr:{
-                type: "number"
-            }
-        },
-        {
-            label: "File:",
-            name: "plot_file_id",
+            label: "Category:",
+            name: "category_id",
             type: 'select'
-        },
+        }, 
         {
-            label: "Mode",
-            name: "mode",
+            label: "Region:",
+            name: "region_id",
+            type: 'select'
+        }, 
+        {
+            label: "TotalAmount:",
+            name: "total_amount",
             attr:{
                 type: "number"
             }
@@ -68,12 +75,50 @@ $(function(){
             attr:{
                 type: "number"
             }
+        },
+        {
+            label: "Nature",
+            name: "nature",
+            type: "select"
+        },
+        {
+            label: "Buyer:",
+            name: "buyer_id",
+            type: 'select'
+        },
+        {
+            label: "Seller:",
+            name: "seller_id",
+            type: 'select'
+        },
+        {
+            label: "Mode:",
+            name: "mode",
+            type: "select"
+        },
+        {
+            label: "Extension Days:",
+            name: "target_date_in_days",
+            attr:{
+                type: "number"
+            }
         }
-
-
+        
         ]
 
     } );
+
+    $( editor.field( 'mode' ).node() ).on('change', function () {
+        var mode = editor.field( 'mode' ).val();
+        
+        if(mode == 'bop' || mode == 'sop'){
+            editor.field('target_date_in_days').show();
+        }else{
+            editor.field('target_date_in_days').hide();
+        }
+
+    });
+
     $(divIdName).DataTable( {
         dom: "Bfrtip",
         ajax: {
@@ -81,13 +126,17 @@ $(function(){
         },
         columns: [
         {
-            data: "total_amount"
+            data: "category.fullname"
         },
-
         {
-            data: "plot_file.serial_no"
+            data: "region.title"
         },
-
+        {
+            data: "seller.username"
+        },
+        {
+            data: "buyer.username"
+        },
         {
             data: "total_amount"
         },
@@ -99,9 +148,17 @@ $(function(){
         {
             data: "remaining_amount"
         },
-
+        {
+            data: 'nature'
+        },
+        {
+            data: 'mode'
+        },
         {
             data: "target_date"
+        },
+        {
+            data: "created_at"
         }
 
         ],
