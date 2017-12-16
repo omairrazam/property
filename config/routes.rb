@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+#  get 'stocks/index'
+get '/stocks' => 'stocks#index', :as => :stocks
   resources :installments
 
   resources :transactions
@@ -20,6 +22,6 @@ devise_scope :user do
       get :cancel
     end
 end
-
+resources :users
   root "homes#index"
 end
