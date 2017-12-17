@@ -20,6 +20,5 @@ class ApplicationController < ActionController::Base
 
   def handle_bad_params(exception)
   	render json: {error: exception.message}.to_json, status: 404
-
   end
 end

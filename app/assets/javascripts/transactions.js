@@ -63,6 +63,13 @@ $(function(){
             type: 'select'
         }, 
         {
+            label: "Pieces:",
+            name: "duplicate_count",
+            attr:{
+                type: "number"
+            }
+        },
+        {
             label: "TotalAmount:",
             name: "total_amount",
             attr:{
@@ -163,6 +170,7 @@ $(function(){
 
         ],
         select: true,
+        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         buttons: [
         {
             extend: "create",

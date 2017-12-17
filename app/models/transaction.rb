@@ -1,5 +1,6 @@
 class Transaction < ApplicationRecord
   before_create :figure_out_target_date
+  after_create :create_child_transactions
   #seller and buyer must not be same validation
   belongs_to :plot_file, optional: true
   belongs_to :buyer,  :class_name => 'User', :foreign_key => 'buyer_id'
@@ -7,12 +8,15 @@ class Transaction < ApplicationRecord
   belongs_to :category
   belongs_to :region
 
+  has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id', dependent: :destroy
+
   enum nature: %i(buying selling)
   enum mode: %i(cash monday_payment next_monday_payment bop sop pod custom)
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
-  validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region
-  validates :total_amount, numericality: { greater_than: 0 } 
+  validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count
+  validates :total_amount, numericality: { greater_than: 0 }
+  validates :duplicate_count, numericality: { greater_than: 0 } 
   validates :recieved_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :nature, inclusion: { in: Transaction.natures.keys }
   validates :mode, inclusion: { in: Transaction.modes.keys }
@@ -35,6 +39,22 @@ class Transaction < ApplicationRecord
 
   def remaining_amount
     total_amount - recieved_amount 
+  end
+
+  def self.create_in_bulk params
+    ActiveRecord::Base.transaction do
+      new_ones = []
+      parent = Transaction.create!(params)
+      new_ones << parent
+      raise ArgumentError.new("Duplicate Count missing, cannot create child") if parent.duplicate_count.blank?
+      (2..parent.duplicate_count).each do 
+        child = parent.dup
+        child.father_id = parent.id
+        child.save!
+        new_ones << child
+      end
+      new_ones
+    end
   end
 
   private
@@ -63,5 +83,10 @@ class Transaction < ApplicationRecord
     if total_amount.to_i < recieved_amount.to_i 
       errors.add(:base, "Total should be greater than recieved amount")
     end
+  end
+
+  def create_child_transactions
+    return if father_id.present?
+    (1..self.duplicate_count).each
   end
 end

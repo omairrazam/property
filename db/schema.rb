@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171216223825) do
+ActiveRecord::Schema.define(version: 20171216233522) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -76,8 +76,11 @@ ActiveRecord::Schema.define(version: 20171216223825) do
     t.bigint "seller_id"
     t.bigint "category_id"
     t.bigint "region_id"
+    t.bigint "father_id"
+    t.integer "duplicate_count", default: 0
     t.index ["buyer_id"], name: "index_transactions_on_buyer_id"
     t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["father_id"], name: "index_transactions_on_father_id"
     t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
     t.index ["region_id"], name: "index_transactions_on_region_id"
     t.index ["seller_id"], name: "index_transactions_on_seller_id"
@@ -113,6 +116,7 @@ ActiveRecord::Schema.define(version: 20171216223825) do
   add_foreign_key "transactions", "categories"
   add_foreign_key "transactions", "plot_files"
   add_foreign_key "transactions", "regions"
+  add_foreign_key "transactions", "transactions", column: "father_id"
   add_foreign_key "transactions", "users", column: "buyer_id"
   add_foreign_key "transactions", "users", column: "seller_id"
 end

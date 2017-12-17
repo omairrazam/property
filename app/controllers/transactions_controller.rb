@@ -24,18 +24,25 @@ class TransactionsController < ApplicationController
   # POST /transactions
   # POST /transactions.json
   def create
-#    Rails.logger.debug params
-#    exit
-    @transaction = Transaction.new(transaction_params)
-    respond_to do |format|
-      if @transaction.save
-        format.html { redirect_to @transaction, notice: 'Transaction was successfully created.' }
-        format.json { render :show, status: :created, location: @transaction }
-      else
-        format.html { render :new }
-        format.json { render json: @transaction.errors, status: :unprocessable_entity }
+    begin
+      @transactions = Transaction.create_in_bulk(transaction_params)
+      respond_to do |format|
+        format.json { render :show, status: :created}
+      end
+    rescue Exception => e
+      respond_to do |format|
+        format.json { render json: {error:e.message}.to_json, status: :unprocessable_entity }
       end
     end
+    # respond_to do |format|
+    #   if @transaction.save
+    #     format.html { redirect_to @transaction, notice: 'Transaction was successfully created.' }
+    #     format.json { render :show, status: :created, location: @transaction }
+    #   else
+    #     format.html { render :new }
+    #     format.json { render json: @transaction.errors, status: :unprocessable_entity }
+    #   end
+    # end
   end
 
   # PATCH/PUT /transactions/1
@@ -73,7 +80,7 @@ class TransactionsController < ApplicationController
       params.require(:transaction).permit(
         :total_amount,:plot_file_id,:category_id,
         :recieved_amount,:target_date,:buyer_id,:region_id,
-        :seller_id, :mode, :nature, :target_date_in_days
+        :seller_id, :mode, :nature, :target_date_in_days, :duplicate_count
         )
     end
 end
