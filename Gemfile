@@ -67,6 +67,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 # gem 'state_machines-activerecord'
 gem 'stateful_enum'
 gem "font-awesome-rails"
+gem 'paper_trail'
 
 
 

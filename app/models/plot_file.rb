@@ -1,4 +1,5 @@
 class PlotFile < ApplicationRecord
+	has_paper_trail
 	after_initialize :set_default_state
 	after_create :sync_state_with_region
 

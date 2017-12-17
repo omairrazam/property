@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+   before_action :set_paper_trail_whodunnit
 #  protect_from_forgery with: :exception
 #  skip_before_action :verify_authenticity_token
   before_action :authenticate_user!

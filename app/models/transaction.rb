@@ -1,4 +1,5 @@
 class Transaction < ApplicationRecord
+  has_paper_trail
   before_create :figure_out_target_date
   after_create :create_child_transactions
   #seller and buyer must not be same validation
