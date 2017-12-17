@@ -5,4 +5,12 @@
 #
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
-BaseAmount.create([{:amount => "100",:category_id => "6"},{:amount => "1200",:category_id => "6"}])
+
+User.where(email:'dealer1@example.com').first_or_create!(email:'dealer1@example.com', username: 'dealer1', password: '1234asdfasfa432!')
+User.where(email:'client1@example.com').first_or_create!(email:'client1@example.com', username: 'client1', password: '1234asdfasfa432!')
+
+Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create!(unit: :marla, size:5, name: '5Marla', pod_days: 60 )
+
+%w[lahore karachi faislabad rawalpindi].each do |city|
+	Region.where('title in (?)', [city,city.pluralize, city.capitalize, city.upcase]).first_or_create(title: city)
+end

@@ -7,7 +7,7 @@ class Category < ApplicationRecord
 	validates :size, numericality: { only_integer: true }, if: Proc.new { |c| !c.cash? }
     validates_presence_of :pod_days, if: Proc.new { |c| !c.cash? }
     
-  	enum unit: %i(marla kanal cash)
+  	enum unit: %i(pia_form marla kanal cash )
 	validates :unit, inclusion: { in: Category.units.keys }
   	
   	scope :distinct_with_plot_files, ->{joins(:plot_files).distinct.all}
