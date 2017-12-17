@@ -8,7 +8,7 @@ class Transaction < ApplicationRecord
   belongs_to :category
   belongs_to :region
 
-  has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id', dependent: :destroy
+  has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id'
 
   enum nature: %i(buying selling)
   enum mode: %i(cash monday_payment next_monday_payment bop sop pod custom)

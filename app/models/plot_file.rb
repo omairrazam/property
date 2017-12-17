@@ -2,8 +2,8 @@ class PlotFile < ApplicationRecord
 	after_initialize :set_default_state
 	after_create :sync_state_with_region
 
-	has_many :transactions, dependent: :destroy
-	has_many :installments, dependent: :destroy
+	has_many :transactions
+	has_many :installments
 	
 	belongs_to :category
 	belongs_to :region, optional: true
