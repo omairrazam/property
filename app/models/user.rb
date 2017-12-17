@@ -5,7 +5,7 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
     :recoverable, :rememberable, :trackable, :validatable
 
-  enum type: %i(client admin dealer)
+  enum role: %i(client admin dealer)
 
   has_many :buyings, :class_name => 'Transaction', :foreign_key => 'buyer_id'
   has_many :sellings, :class_name => 'Transaction', :foreign_key => 'seller_id'

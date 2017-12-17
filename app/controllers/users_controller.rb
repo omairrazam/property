@@ -1,23 +1,4 @@
 class UsersController < ApplicationController
-#
-#  # GET /users
-#  # GET /users.json
-#  def index
-#    @users = User.all
-#    respond_to do |format|
-#      format.html
-#      format.json
-#    end
-#  end
-#
-#  def show
-#    @user = User.find(params[:id])
-#    respond_to do |format|
-#      format.html
-#      format.json
-#    end
-#  end
-
   before_action :set_user, only: [:show, :edit, :update, :destroy]
 
   # GET /users
@@ -72,7 +53,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1.json
   def update
     respond_to do |format|
-      if @user.update(user_params)
+      if @user.update_without_password(user_params)
         format.html { redirect_to @user, notice: 'User was successfully updated.' }
         format.json { render :show, status: :ok, location: "users_url" }
       else
@@ -101,7 +82,7 @@ class UsersController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def user_params
 #      params.require(:user).permit(:username, :email, :password, :password_confirmation, :cnic, :phone, :address)
-      params.require(:user).permit(:username, :email, :password,:password_confirmation, :cnic, :address, :phone, :current_password, :avatar, :avatar_cache, :remove_avatar)
+      params.require(:user).permit(:username, :email, :password,:password_confirmation, :cnic, :address, :phone, :current_password, :avatar, :avatar_cache, :remove_avatar,:role)
     end
 
 end

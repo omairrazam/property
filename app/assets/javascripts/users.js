@@ -15,8 +15,14 @@ $(function(){
                 'type': 'POST',
                 'data': function ( d ) {
                     var data = {user: d['data'][0]};
+
+                    if(data[controller_key]['role'] == -1){
+                        data[controller_key]['role'] = null;
+                    }
+
                     return JSON.stringify( data );
                 },
+                error: datatableAjaxError
 
             },
             edit: {
@@ -30,10 +36,13 @@ $(function(){
                     var data = {user: d.data[i]};
                     return data;
                 },
+                error: datatableAjaxError
             },
             remove: {
                 type: 'DELETE',
-                url:  entity+'/_id_.json'
+                url:  entity+'/_id_.json',
+                error: datatableAjaxError
+
             }
         },
         table: divIdName,
@@ -47,15 +56,16 @@ $(function(){
                 name: "email",
             },
             {
+                label: "Role:",
+                name: "role",
+                type: 'select'
+            },
+            {
                 label: "Password:",
                 name: "password",
                 type: "password"
             },
-            {
-                label: "password confirmation:",
-                name: "password_confirmation",
-                type: "password"
-            },
+            
             {
                 label: "CNIC:",
                 name: "cnic"
@@ -70,15 +80,16 @@ $(function(){
             }
         ]
     } );
-$.fn.dataTable.ext.errMode = 'throw';
-    $(divIdName).DataTable( {
+
+
+$(divIdName).DataTable({
         dom: "Bfrtip",
-        ajax: {'url': "/"+entity+".json", "dataSrc":''},
+        ajax: {'url': "/"+entity+".json"},
         "bJQueryUI": true,
         columns: [
             { data: "username" },
             { data: "email" },
-
+            { data: "role" },
         ],
         select: true,
         buttons: [
@@ -86,6 +97,6 @@ $.fn.dataTable.ext.errMode = 'throw';
             { extend: "edit",   editor: editor },
             { extend: "remove", editor: editor }
         ]
-    } );
+    });
 });
 
