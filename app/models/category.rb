@@ -4,8 +4,8 @@ class Category < ApplicationRecord
 
 	validates_presence_of :name,:unit
 	validates_presence_of :size, if: Proc.new { |c| !c.cash? || !c.pia_form?}
-	validates :size, numericality: { only_integer: true }, if: Proc.new { |c| !c.cash? }
-    validates_presence_of :pod_days, if: Proc.new { |c| !c.cash? }
+	validates :size, numericality: { only_integer: true }, if: Proc.new { |c| !c.cash? || !c.pia_form?}
+    validates_presence_of :pod_days, if: Proc.new { |c| !c.cash? || !c.pia_form?}
     
   	enum unit: %i(pia_form marla kanal cash)
 	validates :unit, inclusion: { in: Category.units.keys }
