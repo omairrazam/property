@@ -3,7 +3,7 @@ class Category < ApplicationRecord
 	has_many :transactions
 
 	validates_presence_of :name,:unit
-	validates_presence_of :size, if: Proc.new { |c| !c.cash? }
+	validates_presence_of :size, if: Proc.new { |c| !c.cash? || !c.pia_form?}
 	validates :size, numericality: { only_integer: true }, if: Proc.new { |c| !c.cash? }
     validates_presence_of :pod_days, if: Proc.new { |c| !c.cash? }
     

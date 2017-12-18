@@ -19,3 +19,4 @@ Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create
 Category.where("size=? AND unit = ?", 10, Category.units[:marla]).first_or_create!(unit: :marla, size:10, name: '10Marla', pod_days: 60,base_amount: 200000 )
 Category.where("size=? AND unit = ?", 1, Category.units[:kanal]).first_or_create!(unit: :kanal, size:1, name: '1Kanal', pod_days: 60,base_amount: 300000 )
 Category.where("unit = ?", Category.units[:cash]).first_or_create!(unit: :cash, name: 'Cash',base_amount: 30000 )
+Category.where("unit = ?", Category.units[:pia_form]).first_or_create!(unit: :pia_form, name: 'Pia Form', base_amount: 3000 )
