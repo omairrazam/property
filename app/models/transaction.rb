@@ -1,18 +1,20 @@
 class Transaction < ApplicationRecord
+  attr_accessor :is_new
+
   has_paper_trail
   before_create :figure_out_target_date
-  after_create :create_child_transactions
-  #seller and buyer must not be same validation
+  after_create :init
+  #care of  and trader must not be same validation
   belongs_to :plot_file, optional: true
-  belongs_to :buyer,  :class_name => 'User', :foreign_key => 'buyer_id'
-  belongs_to :seller, :class_name => 'User', :foreign_key => 'seller_id'
+  belongs_to :care_of,  :class_name => 'User', :foreign_key => 'care_of_id'
+  belongs_to :trader, :class_name => 'User', :foreign_key => 'trader_id'
   belongs_to :category
   belongs_to :region
 
   has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id'
 
   enum nature: %i(buying selling)
-  enum mode: %i(cash monday_payment next_monday_payment bop sop pod custom)
+  enum mode: %i(cash mp nmp bop sop pod custom)
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
   validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count
@@ -29,7 +31,8 @@ class Transaction < ApplicationRecord
   scope :with_nature, ->(nature){where(nature: nature)}
   scope :daily_sellings, ->{daily_all.with_nature(:selling).sum(&:total_amount)}
   scope :daily_buyings, ->{daily_all.with_nature(:buying).sum(&:total_amount)}
-
+  scope :current_mp, ->(nature){where('mode=? AND created_at BETWEEN ? AND ? AND nature = ?', Transaction.modes[:mp],Date.today.beginning_of_week, Date.today.next_week(:monday), Transaction.natures[nature.to_sym])}
+  #scope :current_nmp, ->()
   def pending?
     (total_amount > recieved_amount)
   end
@@ -61,9 +64,9 @@ class Transaction < ApplicationRecord
   private
   def figure_out_target_date
   	self.target_date = case mode.try(:to_sym)
-  	when :monday_payment
+  	when :mp
       Date.today.next_week(:monday)
-  	when :next_monday_payment
+  	when :nmp
       Date.today.next_week(:monday).next_week(:monday)
   	when :bop,:sop
       raise ArgumentError.new("mode is (sop,bop) but target_date_in_days is missing, can't calculate target_date of transaction") if target_date_in_days.blank?
@@ -86,8 +89,7 @@ class Transaction < ApplicationRecord
     end
   end
 
-  def create_child_transactions
-    return if father_id.present?
-    (1..self.duplicate_count).each
+  def init
+    self.is_new = true
   end
 end

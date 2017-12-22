@@ -7,7 +7,7 @@ class User < ApplicationRecord
 
   enum role: %i(client admin dealer)
 
-  has_many :buyings, :class_name => 'Transaction', :foreign_key => 'buyer_id'
-  has_many :sellings, :class_name => 'Transaction', :foreign_key => 'seller_id'
+  #has_many :, :class_name => 'Transaction', :foreign_key => 'buyer_id'
+  #has_many :sellings, :class_name => 'Transaction', :foreign_key => 'seller_id'
 
 end

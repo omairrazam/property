@@ -28,6 +28,7 @@ $(function(){
                 url:  '/'+entity+'/_id_.json',
                 'data': function ( d ) {
                     var id;
+                   
                     for (var i in d.data) {
                         id = i;
                     }
@@ -89,13 +90,13 @@ $(function(){
             type: "select"
         },
         {
-            label: "Buyer:",
-            name: "buyer_id",
+            label: "C/O:",
+            name: "care_of_id",
             type: 'select'
         },
         {
-            label: "Seller:",
-            name: "seller_id",
+            label: "Trader:",
+            name: "trader_id",
             type: 'select'
         },
         {
@@ -126,11 +127,13 @@ $(function(){
 
     });
 
-    $(divIdName).DataTable( {
+    var table = $(divIdName).DataTable( {
         dom: "Bfrtip",
         ajax: {
             'url': "/"+entity+".json"
         },
+
+        order: [[ 10, "desc" ]],
         columns: [
         {
             data: "category.fullname"
@@ -139,10 +142,10 @@ $(function(){
             data: "region.title"
         },
         {
-            data: "seller.username"
+            data: "care_of.username"
         },
         {
-            data: "buyer.username"
+            data: "trader.username"
         },
         {
             data: "total_amount"
@@ -159,31 +162,55 @@ $(function(){
             data: 'nature'
         },
         {
-            data: 'mode'
+            data: 'mode',
+            render: function(value){
+                return value;
+            }
         },
         {
-            data: "target_date"
+            data: "target_date",
+            type: "datetime",
+            render:function (value) {
+                var dt = new Date(value);
+                return dt.toLocaleDateString();
+            }
         },
         {
-            data: "created_at"
+            data: "created_at",
+            type: 'datetime',
+            render:function (value) {
+                var dt = new Date(value);
+                return dt.toLocaleDateString();
+            }
         }
 
         ],
         select: true,
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         buttons: [
-        {
-            extend: "create",
-            editor: editor
-        },
-        {
-            extend: "edit",
-            editor: editor
-        },
-        {
-            extend: "remove",
-            editor: editor
-        }
+            {
+                extend: "create",
+                editor: editor
+            },
+            {
+                extend: "edit",
+                editor: editor
+            },
+            {
+                extend: "remove",
+                editor: editor
+            },
+            {
+                extend: 'collection',
+                text: 'Export',
+                buttons: [
+                    'copy',
+                    'excel',
+                    'csv',
+                    'pdf',
+                    'print'
+                ]
+            }
         ]
     } );
 });

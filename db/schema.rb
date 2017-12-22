@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171217084731) do
+ActiveRecord::Schema.define(version: 20171222095037) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -72,18 +72,18 @@ ActiveRecord::Schema.define(version: 20171217084731) do
     t.integer "mode"
     t.integer "target_date_in_days"
     t.integer "nature"
-    t.bigint "buyer_id"
-    t.bigint "seller_id"
+    t.bigint "care_of_id"
+    t.bigint "trader_id"
     t.bigint "category_id"
     t.bigint "region_id"
     t.bigint "father_id"
     t.integer "duplicate_count", default: 0
-    t.index ["buyer_id"], name: "index_transactions_on_buyer_id"
+    t.index ["care_of_id"], name: "index_transactions_on_care_of_id"
     t.index ["category_id"], name: "index_transactions_on_category_id"
     t.index ["father_id"], name: "index_transactions_on_father_id"
     t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
     t.index ["region_id"], name: "index_transactions_on_region_id"
-    t.index ["seller_id"], name: "index_transactions_on_seller_id"
+    t.index ["trader_id"], name: "index_transactions_on_trader_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -127,6 +127,6 @@ ActiveRecord::Schema.define(version: 20171217084731) do
   add_foreign_key "transactions", "plot_files"
   add_foreign_key "transactions", "regions"
   add_foreign_key "transactions", "transactions", column: "father_id"
-  add_foreign_key "transactions", "users", column: "buyer_id"
-  add_foreign_key "transactions", "users", column: "seller_id"
+  add_foreign_key "transactions", "users", column: "care_of_id"
+  add_foreign_key "transactions", "users", column: "trader_id"
 end
