@@ -78,7 +78,7 @@ class Transaction < ApplicationRecord
             hash = {:week => 7, :days => 1,:month => 30, :months => 30}
             target_no_of_days = no_of_days.first.to_i * hash[no_of_days.last.downcase.strip.to_sym]
           else
-#            raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
+            raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
             target_no_of_days = nil
           end
         else

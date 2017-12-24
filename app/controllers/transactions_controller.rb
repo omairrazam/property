@@ -49,7 +49,7 @@ class TransactionsController < ApplicationController
   end
 
   def import
-    Transaction.import(params[:excel_file])
+    Transaction.delay.import(params[:excel_file])
     redirect_to transactions_url
   end
   private
