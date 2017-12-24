@@ -5,7 +5,11 @@ Rails.application.routes.draw do
   get 'homes/index'
   
   resources :installments
-  resources :transactions
+  resources :transactions do
+    collection do
+      post :import
+    end
+  end
   resources :plot_files
   resources :regions
   resources :categories

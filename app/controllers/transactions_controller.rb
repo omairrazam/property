@@ -48,6 +48,10 @@ class TransactionsController < ApplicationController
     end
   end
 
+  def import
+    Transaction.import(params[:excel_file])
+    redirect_to transactions_url
+  end
   private
     def set_transaction
       @transaction = Transaction.find(params[:id])
