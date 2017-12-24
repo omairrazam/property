@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171223100950) do
+ActiveRecord::Schema.define(version: 20171224115903) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -84,7 +84,6 @@ ActiveRecord::Schema.define(version: 20171223100950) do
     t.integer "duplicate_count", default: 0
     t.string "excel_file"
     t.integer "imported_from"
-    t.string "excel_file_name"
     t.datetime "transaction_date"
     t.bigint "care_of_id"
     t.bigint "trader_id"

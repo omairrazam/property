@@ -50,7 +50,7 @@ class TransactionsController < ApplicationController
 
   def import
     Transaction.delay.import(params[:excel_file])
-    redirect_to transactions_url
+    redirect_to transactions_url, notice: 'Transactions are being imported. You will be informed about the progress via email.'
   end
   private
     def set_transaction

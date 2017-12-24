@@ -1,8 +1,12 @@
-<div class="col-md-4">
+<div class="col-md-4 jumbotron">
 <h2>Import Transactions</h2>
 <%= form_tag import_transactions_path, :multipart => true do %>
-  <%= file_field_tag :excel_file %>
-  <%= submit_tag "Import" %>
+<div class="form-group">
+  <%= file_field_tag :excel_file,:class => "form-control" %>
+</div>
+<div class="form-group">
+  <%= submit_tag "Import", :class => "btn btn-primary" %>
+</div>
 <% end %>
 </div>
 <p id="notice"><%= notice %></p>

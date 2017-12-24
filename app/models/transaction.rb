@@ -19,7 +19,7 @@ class Transaction < ApplicationRecord
   enum imported_from: %i(panel file)
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
-  validates_presence_of :excel_file_name, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
+  validates_presence_of :excel_file, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
   validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count
   validates :total_amount, numericality: { greater_than: 0 }
   validates :duplicate_count, numericality: { greater_than: 0 } 
@@ -78,17 +78,19 @@ class Transaction < ApplicationRecord
             hash = {:week => 7, :days => 1,:month => 30, :months => 30}
             target_no_of_days = no_of_days.first.to_i * hash[no_of_days.last.downcase.strip.to_sym]
           else
-            raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
+            NotificationMailer.import_file_upload_email({:msg => "Incorrect Data found in row #{i} and the data was #{row} please correct the data and reload the file."})
+#            raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
             target_no_of_days = nil
           end
         else
+          NotificationMailer.import_file_upload_email({:msg => "Incorrect Data found in row #{i} and the data was #{row} please correct the data and reload the file."})
 #          raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
           target_no_of_days = nil
         end
-        if row["PCS"].blank? or row["C/O"].blank? or
-            row["NAME"].blank? or row["RATE"].blank? or
-            row["TOTAL"].blank? or row["DATE"].blank?
-            raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
+        
+        if row.values_at("PCS","C/O","NAME","RATE","TOTAL","DATE").any?{|v|v.blank?}
+          NotificationMailer.import_file_upload_email({:msg => "Incorrect Data found in row #{i} and the data was #{row} please correct the data and reload the file."})
+#            raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
         end
         
         #TODO need to check further data validity. don't know how to do so.
@@ -104,12 +106,13 @@ class Transaction < ApplicationRecord
           :region => Region.first, #TODO make dynamic
           :nature => 1, #TODO make dynamic
           :imported_from => 1, #saved from file
-          :excel_file_name => file.original_filename,
+          :excel_file => file,
           :mode => 0,
           :target_date_in_days => target_no_of_days
         )
       end
     end
+    NotificationMailer.import_file_upload_email({:msg => "File is successfully Imported"})
   end
 
   def self.open_spreadsheet(file)
