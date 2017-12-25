@@ -49,9 +49,12 @@ class TransactionsController < ApplicationController
   end
 
   def import
-    Transaction.delay.import(params[:excel_file])
+    uploader = ExcelImportUploader.new
+    uploader.store!(params[:excel_file])
+    Transaction.delay.import(uploader.file)
     redirect_to transactions_url, notice: 'Transactions are being imported. You will be informed about the progress via email.'
   end
+
   private
     def set_transaction
       @transaction = Transaction.find(params[:id])
