@@ -83,8 +83,6 @@ class Transaction < ApplicationRecord
             target_no_of_days = nil
           end
         else
-          NotificationMailer.import_file_upload_email({:msg => "Incorrect Data found in row #{i} and the data was #{row} please correct the data and reload the file."})
-#          raise ArgumentError.new("Incorrect Data found in row #{i} and the data was #{row}")
           target_no_of_days = nil
         end
         
