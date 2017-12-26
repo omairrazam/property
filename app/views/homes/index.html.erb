@@ -1,5 +1,5 @@
-<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-<script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+<!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
+<!-- <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script> -->
 <script src="https://code.highcharts.com/stock/highstock.js"></script>
 <script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 
@@ -10,39 +10,39 @@
     <!-- /.col-lg-12 -->
 </div>
 <!-- /.row -->
+
 <div class="row">
-
-    <div class="col-lg-12 col-md-6">
-        <div class="well">
-            <p>Total Sellings today: Rs: <%= tot_sell = Transaction.daily_sellings %></p>
-            <p>Total Buyings today: Rs: <%= tot_buy = Transaction.daily_buyings %></p>
-            <p >Net:  <span class="badge">Rs:<%= net = (tot_sell - tot_buy) %> </span></p>
-        </div>
-        <table id="daily_stocks" class="display" cellspacing="0" width="100%">
-            <thead>
-                <tr>
-                    <th>Mode</th>
-                    <th>Total Sellings (Rs)</th>
-                    <th>Total Buyings (Rs)</th>
-                    <th>Net (Rs)</th>
-                </tr>
-            </thead>
-                
-            <tbody>
-                <% Transaction.modes.keys.each do |mode| obj = instance_variable_get("@#{mode}")%>
-                    <tr>
-                        <td><%= beautify_display mode %></td>
-                        <td><%= obj.amount_sellings %></td>
-                        <td><%= obj.amount_buyings %></td>
-                        <td><i class="fa fa-chevron-<%= (obj.net_amount > 0) ? 'up text-success' : 'down text-danger' %> " aria-hidden="true"></i>&nbsp;<%= obj.net_amount %> </td>
-                    </tr>
-                <% end %>
-            </tbody>
-        </table>
+  <div class="col-lg-12 col-md-6">
+    <div class="well">
+        <p>Total Sellings today: Rs: <%= tot_sell = Transaction.daily_sellings %></p>
+        <p>Total Buyings today: Rs: <%= tot_buy = Transaction.daily_buyings %></p>
+        <p >Net:  <span class="badge">Rs:<%= net = (tot_sell - tot_buy) %> </span></p>
     </div>
-
-    
-    
+    <%= form_tag homes_index_path, :id =>'transaction_search_form', :method => 'get' do %>
+        <%= select_tag(:mode, options_for_select([["MP", 'mp'],["NMP",'nmp']], params[:mode]),class:"js_t_search select") %>
+        <%= select_tag(:nature, options_for_select([["Buying",'buying'],["Selling", 'selling']], params[:nature]),class:"js_t_search select") %>
+        <%#= submit_tag "Search"%>
+    <% end %>
+   
+    <table id="data_stocks" class="display dataTable no-footer" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Category</th>
+          <th>Region</th>
+          <th>C/O</th>
+          <th>Trader</th>
+          <th>Total Amount (Rs)</th>
+          <th>Received Amount (Rs)</th>
+          <th>Remaining Amount (Rs)</th>
+          <th>Nature</th>
+          <th>Mode</th>
+          <!-- <th>Alarm Date </th> -->
+          <th>Created On </th>
+        </tr>
+      </thead>
+    </table>
+  </div>
 </div>
 <hr>
 <!-- /.row -->
@@ -54,13 +54,7 @@
     </div>
 </div>
 
-
-
 <script type="text/javascript">
-/**
- * Create the chart when all data is loaded
- * @returns {undefined}
- */
 function createChart() {
 
     Highcharts.stockChart('container', {
@@ -100,21 +94,113 @@ function createChart() {
 }
 
 $(function(){
-    d = [{name: names[0][0],data: <%= Transaction.order('created_at ASC').with_mode(:cash).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-         {name: names[1][0],data: <%= Transaction.order('created_at ASC').with_mode(:mp).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-         {name: names[2][0],data: <%= Transaction.order('created_at ASC').with_mode(:nmp).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-         {name: names[3][0],data: <%= Transaction.order('created_at ASC').with_mode(:sop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-         {name: names[4][0],data: <%= Transaction.order('created_at ASC').with_mode(:bop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-         {name: names[5][0],data: <%= Transaction.order('created_at ASC').with_mode(:pod).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-    ];
-    createChart();
-    
+  d = [{name: names[0][0],data: <%= Transaction.order('created_at ASC').with_mode(:cash).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+       {name: names[1][0],data: <%= Transaction.order('created_at ASC').with_mode(:mp).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+       {name: names[2][0],data: <%= Transaction.order('created_at ASC').with_mode(:nmp).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+       {name: names[3][0],data: <%= Transaction.order('created_at ASC').with_mode(:sop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+       {name: names[4][0],data: <%= Transaction.order('created_at ASC').with_mode(:bop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+       {name: names[5][0],data: <%= Transaction.order('created_at ASC').with_mode(:pod).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
+  ];
+  createChart(); 
 });
 
+function child_data( d ) {
+    // `d` is the original data object for the row
+     var tableStr = '<table class="display dataTable no-footer" cellspacing="0" width="100%">';
+      for (var key in d["children"]) {
+        for (var i=0; i<key.length; i++) {
+                 var date = d["children"][key]["created_at"].slice(0, 10).split('-');
+                 tableStr += '<tr>' +
+                 '<td></td>' +
+                 '<td >'+ d["children"][key]["category_id"] + '</td>' +
+                 '<td>' + d["children"][key]["region_id"] + '</td>' +
+                 '<td>' + d["children"][key]["care_of_id"] + '</td>' +
+                 '<td>' + d["children"][key]["trader_id"] + '</td>' +
+                 '<td>' + d["children"][key]["total_amount"] + '</td>' +
+                 '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
+                 '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
+                 '<td>' + d["children"][key]["nature"] + '</td>' +
+                 // '<td>' + d["children"][key]["mode"] + '</td>' +
+                 '<td>' + d["children"][key]["mode"] + '</td>' +
+                 '<td>' + date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
+                 '</tr>';
+        }
+      }
+
+  return tableStr + '</table>';
+}
+
 $(function(){
-    $('#daily_stocks').DataTable();
+
+    var table = $('#data_stocks').DataTable({
+      dom: 'Bfrtip',
+      "ajax": "/homes/index.json?mode="+$('#mode').val()+"&nature="+$('#nature').val(),
+      "columns": [
+          {
+              "className":      'details-control',
+              "orderable":      false,
+              "data":           null,
+              "defaultContent": ''
+          },
+          { "data": "category_id" },
+          { "data": "region_id" },
+          { "data": "care_of_id" },
+          { "data": "trader_id" },
+          { "data": "total_amount" },
+          { "data": "recieved_amount" },
+          { "data": "recieved_amount" },
+          { "data": "nature",
+             render:function (value) {
+              var nt = value;
+              return  nt[0].toUpperCase() + nt.slice(1);
+             } 
+          },
+          { "data": "mode" },
+          { "data": "created_at",
+             "type": 'datetime',
+             render:function (value) {
+              var dt = new Date(value);
+              return dt.toLocaleDateString();
+            } 
+          }
+      ],
+      buttons: [
+          'print'
+    ]}
+    );
+    // Add event listener for opening and closing details
+    $('#data_stocks tbody').on('click', 'td.details-control', function () {
+        var oTable = $('#data_stocks').DataTable();
+        var tr = $(this).closest('tr');
+        var row = oTable.row( tr );
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( child_data(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    });
+
+  $('.js_t_search').on('change',function(){
+      //$('#transaction_search_form').submit();
+      table.ajax.reload();
+      table.ajax.url( "/homes/index.json?mode="+$('#mode').val()+"&nature="+$('#nature').val() ).load();
+
+  });
+
+   homeSellingTable();
 });
+
 
 
 </script>
+<style>
+  table tr td:first-letter{
+   text-transform:capitalize;
+  }
+</style>
 
