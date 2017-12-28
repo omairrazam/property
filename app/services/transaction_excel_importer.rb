@@ -7,25 +7,28 @@ class TransactionExcelImporter
 	end
 
 	def process
-    begin
-    ActiveRecord::Base.transaction do
-      (7..@spreadsheet.last_row).each do |i|
-        row = Hash[[@header, @spreadsheet.row(i)].transpose]
-        @i = i
-        process_row row
+    @spreadsheet.sheets.each do |worksheet|
+      begin
+        ActiveRecord::Base.transaction do
+          (7..@spreadsheet.sheet(worksheet).last_row).each do |i|
+            row = Hash[[@header, @spreadsheet.row(i)].transpose]
+            @i = i
+            get_category_and_nature worksheet
+            process_row row
+          end
+        end
+        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
+      rescue Exception => e
+        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
       end
-    end
-      NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
-    rescue Exception => e
-      NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
     end
 	end
 
 	def process_row row
 		validate row
-    get_target_no_of_days row
-        
-        #TODO need to check further data validity. don't know how to do so.
+    get_region row
+    get_mode row
+    validate_region_mode row
 
         Transaction.create_in_bulk(
           :duplicate_count => row["PCS"],
@@ -34,29 +37,53 @@ class TransactionExcelImporter
           :total_amount => row["RATE"],
           :recieved_amount => row["TOTAL"]/row["PCS"],
           :transaction_date => row["DATE"],
-          :category => Category.first, #TODO make dynamic
-          :region => Region.first, #TODO make dynamic
-          :nature => 1, #TODO make dynamic
+          :category => @category[0],
+          :region => @region[0],
+          :nature => @nature[0],
           :imported_from => 1, #saved from file
           :excel_file => @file,
-          :mode => 0,
+          :mode => @mode[0],
           :target_date_in_days => @target_no_of_days
         )
 	end
-
-	def get_target_no_of_days row
-		if row["TIME"].present?
-        no_of_days = row["TIME"].split(" ").reject(&:blank?)
-        if !(no_of_days.length > 2) # Temporary fix
-          hash = {:week => 7, :days => 1,:month => 30, :months => 30}
-          @target_no_of_days = no_of_days.first.to_i * hash[no_of_days.last.downcase.strip.to_sym]
-        else
-          raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}")
-          @target_no_of_days = nil
-        end
+  
+  def get_category_and_nature worksheet
+    sheetname = worksheet.strip.split('-')
+    if sheetname.length == 2
+      @nature = Transaction.natures.keys.select { |nature| nature == sheetname.first.downcase }
+      if sheetname.last.downcase == "form"
+        cat = sheetname.last.downcase.split("")
+        @category = Category.all.select { |category| category.unit == "form" }
+      elsif sheetname.last.downcase == "cash"
+        @category = Category.all.select { |category| category.unit == "cash" }
+      elsif sheetname.last.downcase.split("").length == 2
+        cat = sheetname.last.downcase.split("")
+        @category = Category.all.select { |category| category.unit.split("").first == cat.last.downcase.strip && category.size == cat.first.to_i }
       else
-        @target_no_of_days = nil
+        raise ArgumentError.new("please correct the sheet name we found #{worksheet}")
       end
+    else
+      raise ArgumentError.new("please correct the sheet name we found #{worksheet}")
+    end
+    raise ArgumentError.new("please correct the sheet name we found #{worksheet}") if (@nature.blank? || @category.blank?)
+  end
+
+  def validate_region_mode row
+    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (@mode.blank? || @region.blank?)
+  end
+
+  def get_mode row
+    @mode = Transaction.modes.keys.select { |mode| mode == row["TYPE"].downcase.strip }
+    get_target_no_of_days row if ["bop","sop"].include? @mode[0]
+  end
+
+  def get_region row
+    @region = Region.all.select { |region| region.title == row["REGION"].downcase.strip }
+  end
+  
+	def get_target_no_of_days row
+    @target_no_of_days = (Date.parse(row["DUE DATE"].strip) - Date.parse(row["DATE"].strip)).to_i
+    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (@target_no_of_days < 0)
 	end
 
   def open_spreadsheet file
@@ -69,7 +96,7 @@ class TransactionExcelImporter
   end
 
 	def validate row
-		if row.values_at("PCS","C/O","NAME","RATE","TOTAL","DATE").any?{|v|v.blank?}
+		if row.values_at("PCS","NAME","C/O","RATE","TOTAL","DATE","TYPE","DUE DATE","REGION").any?{|v|v.blank?}
       raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}")
     end
 	end

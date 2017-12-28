@@ -11,7 +11,7 @@ User.where(email:'client1@example.com').first_or_create!(email:'client1@example.
 
 Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create!(unit: :marla, size:5, name: '5Marla', pod_days: 60 )
 
-%w[lahore karachi faislabad rawalpindi].each do |city|
+%w[lhr khi fsd rwp].each do |city|
 	Region.where('title in (?)', [city,city.pluralize, city.capitalize, city.upcase]).first_or_create(title: city)
 end
 
