@@ -18,9 +18,11 @@ class TransactionExcelImporter
             process_row row
           end
         end
-        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
+        p "completed"
+#        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
       rescue Exception => e
-        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
+        p e.message
+#        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
       end
     end
 	end
@@ -53,8 +55,7 @@ class TransactionExcelImporter
     if sheetname.length == 2
       @nature = Transaction.natures.keys.select { |nature| nature == sheetname.first.downcase }
       if sheetname.last.downcase == "form"
-        cat = sheetname.last.downcase.split("")
-        @category = Category.all.select { |category| category.unit == "form" }
+        @category = Category.all.select { |category| category.unit == "pia_form" }
       elsif sheetname.last.downcase == "cash"
         @category = Category.all.select { |category| category.unit == "cash" }
       elsif sheetname.last.downcase.split("").length == 2
