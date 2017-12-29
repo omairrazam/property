@@ -39,7 +39,7 @@ class TransactionExcelImporter
           :trader => Person.where(:username => row["NAME"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["NAME"].downcase.strip.tr(" ", "_")),
           :total_amount => row["RATE"],
           :recieved_amount => row["TOTAL"]/row["PCS"],
-          :transaction_date => row["DATE"],
+          :transaction_date => @date,
           :category => @category[0],
           :region => @region[0],
           :nature => @nature[0],
@@ -101,10 +101,10 @@ class TransactionExcelImporter
       day = date[0]
       month = date[1]
       year = date[2].to_i < 2000 ? (date[2].to_i + 2000) : date[2]
-      final_date = [day,month,year].join('/')
+      @date = [day,month,year].join('/')
     end
-    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (final_date.blank? || final_due_date.blank?)
-    @target_no_of_days = (Date.parse(final_due_date) - Date.parse(final_date)).to_i
+    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (@date.blank? || final_due_date.blank?)
+    @target_no_of_days = (Date.parse(final_due_date) - Date.parse(@date)).to_i
     raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (@target_no_of_days < 0)
 	end
 
@@ -118,7 +118,7 @@ class TransactionExcelImporter
   end
 
 	def validate row
-		if row.values_at("PCS","NAME","C/O","RATE","TOTAL","DATE","TYPE","DUE DATE","REGION").any?{|v|v.blank?}
+		if row.values_at("PCS","NAME","C/O","RATE","TOTAL","DATE","TYPE","REGION").any?{|v|v.blank?}
       raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ")
     end
 	end
