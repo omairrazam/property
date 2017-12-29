@@ -82,7 +82,27 @@ class TransactionExcelImporter
   end
   
 	def get_target_no_of_days row
-    @target_no_of_days = (Date.parse(row["DUE DATE"].strip) - Date.parse(row["DATE"].strip)).to_i
+    due_date = row["DUE DATE"].strip.split("/")
+    due_date = row["DUE DATE"].strip.split('-') if (due_date.length == 1 || due_date.blank?)
+    
+    if due_date.length == 3
+      day = due_date[0]
+      month = due_date[1]
+      year = due_date[2].to_i < 2000 ? (due_date[2].to_i + 2000) : due_date[2]
+      final_due_date = [day,month,year].join('/')
+    end
+    
+    date = row["DATE"].strip.split('/')
+    date = row["DATE"].strip.split('-') if (date.length == 1 || date.blank?)
+    
+    if date.length == 3
+      day = date[0]
+      month = date[1]
+      year = date[2].to_i < 2000 ? (date[2].to_i + 2000) : date[2]
+      final_date = [day,month,year].join('/')
+    end
+    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (final_date.blank? || final_due_date.blank?)
+    @target_no_of_days = (Date.parse(final_due_date) - Date.parse(final_date)).to_i
     raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (@target_no_of_days < 0)
 	end
 
