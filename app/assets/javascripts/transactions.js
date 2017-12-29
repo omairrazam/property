@@ -4,7 +4,9 @@ $(function(){
     var controller_key = 'transaction';
     var divIdName = '#datatable_transactions';
     
-    editor = new $.fn.dataTable.Editor( {
+    editor = new $.fn.dataTable.Editor({
+        template: '#customForm',
+        table: divIdName,
         ajax: {
             create: {
                 url:  '/'+entity,
@@ -21,7 +23,6 @@ $(function(){
                     return JSON.stringify( data );
                 },
                 error: datatableAjaxError
-
             },
             edit: {
                 type: 'PUT',
@@ -127,6 +128,8 @@ $(function(){
 
     });
 
+
+///// Child Rows //////////////////
     var table = $(divIdName).DataTable( {
         dom: "Bfrtip",
         ajax: {
@@ -134,57 +137,67 @@ $(function(){
         },
 
         order: [[ 10, "desc" ]],
-        columns: [
-        {
-            data: "category.fullname"
-        },
-        {
-            data: "region.title"
-        },
-        {
-            data: "care_of.username"
-        },
-        {
-            data: "trader.username"
-        },
-        {
-            data: "total_amount"
-        },
-
-        {
-            data: "recieved_amount"
-        },
-
-        {
-            data: "remaining_amount"
-        },
-        {
-            data: 'nature'
-        },
-        {
-            data: 'mode',
-            render: function(value){
-                return value;
-            }
-        },
-        {
-            data: "target_date",
-            type: "datetime",
-            render:function (value) {
-                var dt = new Date(value);
-                return dt.toLocaleDateString();
-            }
-        },
-        {
-            data: "created_at",
-            type: 'datetime',
-            render:function (value) {
-                var dt = new Date(value);
-                return dt.toLocaleDateString();
-            }
-        }
-
-        ],
+        "columns": [
+          {
+              "className":      'details-control',
+              "orderable":      false,
+              "data":           null,
+              "defaultContent": ''
+          },
+          { "data": "category.fullname",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // } 
+          },
+          { "data": "region.title",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // } 
+          },
+          { "data": "care_of.username",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // } 
+          },
+          { "data": "trader.username",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // } 
+          },
+          { "data": "total_amount" },
+          { "data": "recieved_amount" },
+          { "data": "recieved_amount" },
+          { "data": "nature",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // } 
+          },
+          { "data": "mode",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // }  
+          },
+          { "data": "target_date",
+             "type": 'datetime',
+            //  render:function (value) {
+            //   var dt = new Date(value);
+            //   return dt.toLocaleDateString();
+            // } 
+          },
+          { "data": "created_at",
+             "type": 'datetime',
+            //  render:function (value) {
+            //   var dt = new Date(value);
+            //   return dt.toLocaleDateString();
+            // } 
+          }
+      ],
         select: true,
         lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
         buttons: [
@@ -212,6 +225,98 @@ $(function(){
                 ]
             }
         ]
-    } );
+    });
+ });
+
+function child_data( d ) {
+    // `d` is the original data object for the row
+     var tableStr = '<table class="display dataTable no-footer" cellspacing="0" width="100%">';
+      for (var key in d["children"]) {
+        for (var i=0; i<key.length; i++) {
+           var date = d["children"][key]["created_at"].slice(0, 10).split('-');
+           var t_date = d["children"][key]["target_date"].slice(0, 10).split('-');
+           var single_amount = Math.round(d["children"][key]["total_amount"] / d["children"][key]["duplicate_count"]);
+           tableStr += '<tr>' +
+           '<td></td>' +
+           '<td >'+ d["children"][key]["category_id"] + '</td>' +
+           '<td>' + d["children"][key]["region_id"] + '</td>' +
+           '<td>' + d["children"][key]["care_of_id"] + '</td>' +
+           '<td>' + d["children"][key]["trader_id"] + '</td>' +
+           '<td>' + single_amount + '</td>' +
+           '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
+           '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
+           '<td>' + d["children"][key]["nature"] + '</td>' +
+           // '<td>' + d["children"][key]["mode"] + '</td>' +
+           '<td>' + d["children"][key]["mode"] + '</td>' +
+           '<td>' + t_date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
+           '<td>' + date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
+           '</tr>';
+        }
+      }
+
+  return tableStr + '</table>';
+}
+
+$(function(){
+
+    var table = $('#datatable_transactions').DataTable({
+      dom: 'Bfrtip',   
+      ajax: {
+            'url': "/"+entity+".json"
+        },
+      "columns": [
+          {
+            "className":      'details-control',
+            "orderable":      false,
+            "data":           null,
+            "defaultContent": ''
+          },
+          { "data": "category.fullname" },
+          { "data": "region.title" },
+          { "data": "care_of.username" },
+          { "data": "trader.username" },
+          { "data": "total_amount" },
+          { "data": "recieved_amount" },
+          { "data": "recieved_amount" },
+          { "data": "nature",
+             // render:function (value) {
+             //  var nt = value;
+             //  return  nt[0].toUpperCase() + nt.slice(1);
+             // } 
+          },
+          { "data": "mode" },
+          { "data": "target_date",
+             "type": 'datetime',
+            //  render:function (value) {
+            //   var dt = new Date(value);
+            //   return dt.toLocaleDateString();
+            // } 
+          },
+          { "data": "created_at",
+             "type": 'datetime',
+            //  render:function (value) {
+            //   var dt = new Date(value);
+            //   return dt.toLocaleDateString();
+            // } 
+          }
+      ]
+});
+
+   // Add event listener for opening and closing details
+    $('#datatable_transactions tbody').on('click', 'td.details-control', function () {
+        var oTable = $('#datatable_transactions').DataTable();
+        var tr = $(this).closest('tr');
+        var row = oTable.row( tr );
+        if ( row.child.isShown() ) {
+            // This row is already open - close it
+            row.child.hide();
+            tr.removeClass('shown');
+        }
+        else {
+            // Open this row
+            row.child( child_data(row.data()) ).show();
+            tr.addClass('shown');
+        }
+    });
 });
 

@@ -1,9 +1,31 @@
 <p id="notice"><%= notice %></p>
 
+<div id="customForm">
+  <fieldset class="name">
+      <legend>Name</legend>
+      <editor-field name="category_id"></editor-field>
+      <editor-field name="region_id"></editor-field>
+      <editor-field name="duplicate_count"></editor-field>
+      <editor-field name="total_amount"></editor-field>
+  </fieldset>
+  <fieldset class="office">
+      <legend>Office</legend>
+      <editor-field name="recieved_amount"></editor-field>
+      <editor-field name="trader_id"></editor-field>
+  </fieldset>
+  <fieldset class="hr">
+      <legend>HR info</legend>
+      <editor-field name="mode"></editor-field>
+      <editor-field name="target_date_in_days"></editor-field>
+      <editor-field name="nature"></editor-field>
+      <editor-field name="care_of_id"></editor-field>
+  </fieldset>
+</div>
 <div class="datatable">
   <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
       <thead>
           <tr>
+            <th></th>
             <th>Category</th>
             <th>Region</th>
             <th>C/O</th>
@@ -19,3 +41,45 @@
       </thead>
   </table>
 </div>
+
+
+
+<style type="text/css">
+  #customForm {
+    display: flex;
+    flex-flow: row wrap;
+}
+ 
+#customForm fieldset {
+    flex: 1;
+    border: 1px solid #aaa;
+    margin: 0.5em;
+}
+ 
+#customForm fieldset legend {
+    padding: 5px 20px;
+    border: 1px solid #aaa;
+    font-weight: bold;
+}
+ 
+#customForm fieldset.name {
+    flex: 2 100%;
+}
+ 
+#customForm fieldset.name legend {
+    background: #bfffbf;
+}
+ 
+#customForm fieldset.office legend {
+    background: #ffffbf;
+}
+ 
+#customForm fieldset.hr legend {
+    background: #ffbfbf;
+}
+ 
+#customForm div.DTE_Field {
+    padding: 5px;
+}
+  
+</style>
