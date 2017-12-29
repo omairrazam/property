@@ -12,6 +12,7 @@ class TransactionExcelImporter
         ActiveRecord::Base.transaction do
           (7..@spreadsheet.sheet(worksheet).last_row).each do |i|
             row = Hash[[@header, @spreadsheet.row(i)].transpose]
+            @worksheet = worksheet
             @i = i
             get_category_and_nature worksheet
             process_row row
@@ -69,7 +70,7 @@ class TransactionExcelImporter
   end
 
   def validate_region_mode row
-    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (@mode.blank? || @region.blank?)
+    raise ArgumentError.new("Incorrect Data found in row #{@i}, the data was #{row} and sheet is #{@worksheet} ") if (@mode.blank? || @region.blank?)
   end
 
   def get_mode row
@@ -101,9 +102,9 @@ class TransactionExcelImporter
       year = date[2].to_i < 2000 ? (date[2].to_i + 2000) : date[2]
       final_date = [day,month,year].join('/')
     end
-    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (final_date.blank? || final_due_date.blank?)
+    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (final_date.blank? || final_due_date.blank?)
     @target_no_of_days = (Date.parse(final_due_date) - Date.parse(final_date)).to_i
-    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}") if (@target_no_of_days < 0)
+    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (@target_no_of_days < 0)
 	end
 
   def open_spreadsheet file
@@ -117,7 +118,7 @@ class TransactionExcelImporter
 
 	def validate row
 		if row.values_at("PCS","NAME","C/O","RATE","TOTAL","DATE","TYPE","DUE DATE","REGION").any?{|v|v.blank?}
-      raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row}")
+      raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ")
     end
 	end
 
