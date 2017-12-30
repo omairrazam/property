@@ -1,4 +1,5 @@
 class Transaction < ApplicationRecord
+  mount_uploader :excel_file, ExcelImportUploader
   attr_accessor :is_new
 
   has_paper_trail
@@ -6,8 +7,8 @@ class Transaction < ApplicationRecord
   after_create :init
   #care of  and trader must not be same validation
   belongs_to :plot_file, optional: true
-  belongs_to :care_of,  :class_name => 'User', :foreign_key => 'care_of_id'
-  belongs_to :trader, :class_name => 'User', :foreign_key => 'trader_id'
+  belongs_to :care_of,  :class_name => 'Person', :foreign_key => 'care_of_id'
+  belongs_to :trader, :class_name => 'Person', :foreign_key => 'trader_id'
   belongs_to :category
   belongs_to :region
 
@@ -15,8 +16,10 @@ class Transaction < ApplicationRecord
 
   enum nature: %i(buying selling)
   enum mode: %i(cash mp nmp bop sop pod custom)
+  enum imported_from: %i(panel file)
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
+  validates_presence_of :excel_file, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
   validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count
   validates :total_amount, numericality: { greater_than: 0 }
   validates :duplicate_count, numericality: { greater_than: 0 } 

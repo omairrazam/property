@@ -1,11 +1,17 @@
-Rails.application.routes.draw do
+require 'sidekiq/web'
 
+Rails.application.routes.draw do
+  mount Sidekiq::Web => '/sidekiq'
   #  get 'stocks/index'
   get '/stocks' => 'stocks#index', :as => :stocks
   get 'homes/index'
   
   resources :installments
-  resources :transactions
+  resources :transactions do
+    collection do
+      post :import
+    end
+  end
   resources :plot_files
   resources :regions
   resources :categories
