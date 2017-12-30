@@ -12,7 +12,7 @@ class Transaction < ApplicationRecord
   belongs_to :category
   belongs_to :region
 
-  has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id'
+  has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id', dependent: :destroy
 
   enum nature: %i(buying selling)
   enum mode: %i(cash mp nmp bop sop pod custom)
@@ -35,7 +35,9 @@ class Transaction < ApplicationRecord
   scope :daily_sellings, ->{daily_all.with_nature(:selling).sum(&:total_amount)}
   scope :daily_buyings, ->{daily_all.with_nature(:buying).sum(&:total_amount)}
   scope :current_mp, ->(nature){where('mode=? AND created_at BETWEEN ? AND ? AND nature = ?', Transaction.modes[:mp],Date.today.beginning_of_week, Date.today.next_week(:monday), Transaction.natures[nature.to_sym])}
-  #scope :current_nmp, ->()
+  scope :current_nmp, ->(nature){where('mode=? AND created_at BETWEEN ? AND ? AND nature = ?', Transaction.modes[:nmp],Date.today.beginning_of_week, Date.today.next_week(:monday), Transaction.natures[nature.to_sym])}
+  scope :only_parents, -> {where('father_id is NULL')}
+  
   def pending?
     (total_amount > recieved_amount)
   end

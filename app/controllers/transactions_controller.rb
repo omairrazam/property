@@ -2,7 +2,7 @@ class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :edit, :update, :destroy]
 
   def index
-    @transactions = Transaction.order('id desc').all
+    @transactions = Transaction.only_parents.includes(:children).order('id desc')
   end
 
   def show
