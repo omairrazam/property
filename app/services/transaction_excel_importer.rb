@@ -18,11 +18,9 @@ class TransactionExcelImporter
             process_row row
           end
         end
-        p "completed"
-#        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
+        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
       rescue Exception => e
-        p e.message
-#        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
+        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
       end
     end
 	end
