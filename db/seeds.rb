@@ -9,14 +9,14 @@
 User.where(email:'dealer1@example.com').first_or_create!(email:'dealer1@example.com', username: 'dealer1', password: '1234asdfasfa432!')
 User.where(email:'client1@example.com').first_or_create!(email:'client1@example.com', username: 'client1', password: '1234asdfasfa432!')
 
-Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create!(unit: :marla, size:5, name: '5Marla', pod_days: 60 )
+Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create!(unit: :m, size:5, name: '5Marla', pod_days: 60 )
 
 %w[lhr khi fsd rwp].each do |city|
 	Region.where('title in (?)', [city,city.pluralize, city.capitalize, city.upcase]).first_or_create(title: city)
 end
 
-Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create!(unit: :marla, size:5, name: '5Marla', pod_days: 60, base_amount: 100000 )
-Category.where("size=? AND unit = ?", 10, Category.units[:marla]).first_or_create!(unit: :marla, size:10, name: '10Marla', pod_days: 60,base_amount: 200000 )
-Category.where("size=? AND unit = ?", 1, Category.units[:kanal]).first_or_create!(unit: :kanal, size:1, name: '1Kanal', pod_days: 60,base_amount: 300000 )
+Category.where("size=? AND unit = ?", 5, Category.units[:marla]).first_or_create!(unit: :m, size:5, name: '5Marla', pod_days: 60, base_amount: 100000 )
+Category.where("size=? AND unit = ?", 10, Category.units[:marla]).first_or_create!(unit: :m, size:10, name: '10Marla', pod_days: 60,base_amount: 200000 )
+Category.where("size=? AND unit = ?", 1, Category.units[:kanal]).first_or_create!(unit: :k, size:1, name: '1Kanal', pod_days: 60,base_amount: 300000 )
 Category.where("unit = ?", Category.units[:cash]).first_or_create!(unit: :cash, name: 'Cash',base_amount: 30000 )
-Category.where("unit = ?", Category.units[:pia_form]).first_or_create!(unit: :pia_form, name: 'Pia Form', base_amount: 3000 )
+Category.where("unit = ?", Category.units[:form]).first_or_create!(unit: :form, name: 'Pia Form', base_amount: 3000 )
