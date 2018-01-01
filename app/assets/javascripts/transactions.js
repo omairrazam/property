@@ -1,9 +1,14 @@
 $(function(){
+    // Add event listener for opening and closing details
+    
+
     var editor; // use a global for the submit and return data rendering in the examples
     var entity = 'transactions';
     var controller_key = 'transaction';
     var divIdName = '#datatable_transactions';
     
+    
+
     editor = new $.fn.dataTable.Editor({
         template: '#customForm',
         table: divIdName,
@@ -117,206 +122,150 @@ $(function(){
 
     } );
 
-    $( editor.field( 'mode' ).node() ).on('change', function () {
-        var mode = editor.field( 'mode' ).val();
-        
-        if(mode == 'bop' || mode == 'sop'){
-            editor.field('target_date_in_days').show();
-        }else{
-            editor.field('target_date_in_days').hide();
-        }
+$( editor.field( 'mode' ).node() ).on('change', function () {
+    var mode = editor.field( 'mode' ).val();
+    
+    if(mode == 'bop' || mode == 'sop'){
+        editor.field('target_date_in_days').show();
+    }else{
+        editor.field('target_date_in_days').hide();
+    }
 
-    });
+});
 
 
-///// Child Rows //////////////////
-    var table = $(divIdName).DataTable( {
-        dom: "Bfrtip",
-        ajax: {
-            'url': "/"+entity+".json"
-        },
-
-        order: [[ 10, "desc" ]],
-        "columns": [
-          {
-              "className":      'details-control',
-              "orderable":      false,
-              "data":           null,
-              "defaultContent": ''
-          },
-          { "data": "category.fullname",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // } 
-          },
-          { "data": "region.title",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // } 
-          },
-          { "data": "care_of.username",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // } 
-          },
-          { "data": "trader.username",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // } 
-          },
-          { "data": "total_amount" },
-          { "data": "recieved_amount" },
-          { "data": "recieved_amount" },
-          { "data": "nature",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // } 
-          },
-          { "data": "mode",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // }  
-          },
-          { "data": "target_date",
-             "type": 'datetime',
-            //  render:function (value) {
-            //   var dt = new Date(value);
-            //   return dt.toLocaleDateString();
-            // } 
-          },
-          { "data": "created_at",
-             "type": 'datetime',
-            //  render:function (value) {
-            //   var dt = new Date(value);
-            //   return dt.toLocaleDateString();
-            // } 
-          }
-      ],
-        select: true,
-        lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-        buttons: [
-            {
-                extend: "create",
-                editor: editor
-            },
-            {
-                extend: "edit",
-                editor: editor
-            },
-            {
-                extend: "remove",
-                editor: editor
-            },
-            {
-                extend: 'collection',
-                text: 'Export',
-                buttons: [
-                    'copy',
-                    'excel',
-                    'csv',
-                    'pdf',
-                    'print'
-                ]
-            }
-        ]
-    });
- });
-
-function child_data( d ) {
-    // `d` is the original data object for the row
-     var tableStr = '<table class="display dataTable no-footer" cellspacing="0" width="100%">';
-      for (var key in d["children"]) {
-        for (var i=0; i<key.length; i++) {
-           var date = d["children"][key]["created_at"].slice(0, 10).split('-');
-           var t_date = d["children"][key]["target_date"].slice(0, 10).split('-');
-           var single_amount = Math.round(d["children"][key]["total_amount"] / d["children"][key]["duplicate_count"]);
-           tableStr += '<tr>' +
-           '<td></td>' +
-           '<td >'+ d["children"][key]["category_id"] + '</td>' +
-           '<td>' + d["children"][key]["region_id"] + '</td>' +
-           '<td>' + d["children"][key]["care_of_id"] + '</td>' +
-           '<td>' + d["children"][key]["trader_id"] + '</td>' +
-           '<td>' + single_amount + '</td>' +
-           '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
-           '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
-           '<td>' + d["children"][key]["nature"] + '</td>' +
-           // '<td>' + d["children"][key]["mode"] + '</td>' +
-           '<td>' + d["children"][key]["mode"] + '</td>' +
-           '<td>' + t_date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
-           '<td>' + date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
-           '</tr>';
-        }
-      }
-
-  return tableStr + '</table>';
-}
-
-$(function(){
-
-    var table = $('#datatable_transactions').DataTable({
-      dom: 'Bfrtip',   
+var table = $(divIdName).DataTable( {
+      dom: "Bfrtip",
       ajax: {
-            'url': "/"+entity+".json"
-        },
+          'url': "/"+entity+".json"
+      },
+
+      order: [[ 10, "desc" ]],
       "columns": [
+        { "data": "duplicate_count" },
+        { "data": "category.fullname",
+           render:function (value) {
+            var nt = value;
+            return  nt[0].toUpperCase() + nt.slice(1);
+           } 
+        },
+        { "data": "region.title",
+           render:function (value) {
+            var nt = value;
+            return  nt[0].toUpperCase() + nt.slice(1);
+           } 
+        },
+        { "data": "care_of.username",
+           render:function (value) {
+            var nt = value;
+            return  nt[0].toUpperCase() + nt.slice(1);
+           } 
+        },
+        { "data": "trader.username",
+           render:function (value) {
+            var nt = value;
+            return  nt[0].toUpperCase() + nt.slice(1);
+           } 
+        },
+        { "data": "total_amount",
+          render: function(data,type,row){
+            return  (row.total_amount * row.duplicate_count);
+          }
+        },
+        { "data": "recieved_amount",
+          render: function(data,type,row){
+            return  (row.recieved_amount * row.duplicate_count);
+          }
+        },
+        { "data": "remaining_amount" ,
+          render: function(data,type,row){
+            return  (row.remaining_amount * row.duplicate_count);
+          }
+        },
+        { "data": "nature",
+           render:function (value) {
+            var nt = value;
+            return  nt[0].toUpperCase() + nt.slice(1);
+           } 
+        },
+        { "data": "mode",
+           render:function (value) {
+            var nt = value;
+            return  nt[0].toUpperCase() + nt.slice(1);
+           }  
+        },
+        { "data": "transaction_date",
+           "type": 'datetime',
+           render:function (value) {
+            var dt = new Date(value);
+            return dt.toLocaleDateString();
+          } 
+        },
+        { "data": "target_date",
+           "type": 'datetime',
+           render:function (value) {
+            var dt = new Date(value);
+            return dt.toLocaleDateString();
+          } 
+        },
+        
+    ],
+      lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
+      select:true,
+      buttons: [
           {
-            "className":      'details-control',
-            "orderable":      false,
-            "data":           null,
-            "defaultContent": ''
+              extend: "create",
+              editor: editor
           },
-          { "data": "category.fullname" },
-          { "data": "region.title" },
-          { "data": "care_of.username" },
-          { "data": "trader.username" },
-          { "data": "total_amount" },
-          { "data": "recieved_amount" },
-          { "data": "recieved_amount" },
-          { "data": "nature",
-             // render:function (value) {
-             //  var nt = value;
-             //  return  nt[0].toUpperCase() + nt.slice(1);
-             // } 
+          {
+              extend: "edit",
+              editor: editor
           },
-          { "data": "mode" },
-          { "data": "target_date",
-             "type": 'datetime',
-            //  render:function (value) {
-            //   var dt = new Date(value);
-            //   return dt.toLocaleDateString();
-            // } 
+          {
+              extend: "remove",
+              editor: editor
           },
-          { "data": "created_at",
-             "type": 'datetime',
-            //  render:function (value) {
-            //   var dt = new Date(value);
-            //   return dt.toLocaleDateString();
-            // } 
+          {
+              extend: 'collection',
+              text: 'Export',
+              buttons: [
+                  'copy',
+                  'excel',
+                  'csv',
+                  'pdf',
+                  'print'
+              ]
           }
       ]
+  });
 });
 
-   // Add event listener for opening and closing details
-    $('#datatable_transactions tbody').on('click', 'td.details-control', function () {
-        var oTable = $('#datatable_transactions').DataTable();
-        var tr = $(this).closest('tr');
-        var row = oTable.row( tr );
-        if ( row.child.isShown() ) {
-            // This row is already open - close it
-            row.child.hide();
-            tr.removeClass('shown');
-        }
-        else {
-            // Open this row
-            row.child( child_data(row.data()) ).show();
-            tr.addClass('shown');
-        }
-    });
-});
+// function child_data( d ) {
+//     // `d` is the original data object for the row
+//      var tableStr = '<table class="display dataTable no-footer" cellspacing="0" width="100%">';
+//       for (var key in d["children"]) {
+//         for (var i=0; i<key.length; i++) {
+//            var date = d["children"][key]["created_at"].slice(0, 10).split('-');
+//            var t_date = d["children"][key]["target_date"].slice(0, 10).split('-');
+//            var single_amount = Math.round(d["children"][key]["total_amount"] / d["children"][key]["duplicate_count"]);
+//            tableStr += '<tr>' +
+//            '<td></td>' +
+//            '<td >'+ d["children"][key]["category_id"] + '</td>' +
+//            '<td>' + d["children"][key]["region_id"] + '</td>' +
+//            '<td>' + d["children"][key]["care_of_id"] + '</td>' +
+//            '<td>' + d["children"][key]["trader_id"] + '</td>' +
+//            '<td>' + single_amount + '</td>' +
+//            '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
+//            '<td>' + d["children"][key]["recieved_amount"] + '</td>' +
+//            '<td>' + d["children"][key]["nature"] + '</td>' +
+//            // '<td>' + d["children"][key]["mode"] + '</td>' +
+//            '<td>' + d["children"][key]["mode"] + '</td>' +
+//            '<td>' + t_date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
+//            '<td>' + date[1] +'/'+ date[2] +'/'+ date[0] + '</td>' +
+//            '</tr>';
+//         }
+//       }
+
+//   return tableStr + '</table>';
+// }
 

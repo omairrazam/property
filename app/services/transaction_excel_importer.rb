@@ -8,6 +8,7 @@ class TransactionExcelImporter
 
 	def process
     @spreadsheet.sheets.each do |worksheet|
+      #next if worksheet == 'All-City_Buying-10-M'
       begin
         ActiveRecord::Base.transaction do
           (7..@spreadsheet.sheet(worksheet).last_row).each do |i|
@@ -18,9 +19,9 @@ class TransactionExcelImporter
             process_row row
           end
         end
-        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed"}).deliver_now
+        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed for sheet #{worksheet}"}).deliver_now
       rescue Exception => e
-        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
+       NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
       end
     end
 	end
@@ -49,19 +50,19 @@ class TransactionExcelImporter
 	end
   
   def get_category_and_nature worksheet
-    sheetname = worksheet.strip.split('-')
+    sheetname = worksheet.strip.split('_').last.split('-')
+    @nature = Transaction.natures.keys.select { |nature| nature == sheetname.first.downcase }
+
     if sheetname.length == 2
-      @nature = Transaction.natures.keys.select { |nature| nature == sheetname.first.downcase }
       if sheetname.last.downcase == "form"
         @category = Category.all.select { |category| category.unit == "pia_form" }
       elsif sheetname.last.downcase == "cash"
         @category = Category.all.select { |category| category.unit == "cash" }
-      elsif sheetname.last.downcase.split("").length == 2
-        cat = sheetname.last.downcase.split("")
-        @category = Category.all.select { |category| category.unit.split("").first == cat.last.downcase.strip && category.size == cat.first.to_i }
       else
         raise ArgumentError.new("please correct the sheet name we found #{worksheet}")
       end
+    elsif sheetname.length == 3
+      @category = Category.all.select { |category| category.unit == sheetname.last.downcase.strip && category.size == sheetname.second.to_i }
     else
       raise ArgumentError.new("please correct the sheet name we found #{worksheet}")
     end
@@ -69,11 +70,11 @@ class TransactionExcelImporter
   end
 
   def validate_region_mode row
-    raise ArgumentError.new("Incorrect Data found in row #{@i}, the data was #{row} and sheet is #{@worksheet} ") if (@mode.blank? || @region.blank?)
+    raise ArgumentError.new("Incorrect Data found in row #{@i} from validate_region_mode, the data was #{row.as_json} and sheet is #{@worksheet} ") if (@mode.blank? || @region.blank?)
   end
 
   def get_mode row
-    @mode = Transaction.modes.keys.select { |mode| mode == row["TYPE"].downcase.strip }
+    @mode = Transaction.modes.keys.select { |mode| mode == row["TYPE"].split(' ').last.downcase.strip }
     get_target_no_of_days row if ["bop","sop"].include? @mode[0]
   end
 
@@ -82,9 +83,12 @@ class TransactionExcelImporter
   end
   
 	def get_target_no_of_days row
+    r = row
+    row['DATE'] = row["DATE"].strftime('%d/%m/%y') if row['DATE'].class == Date
+    row['DUE DATE'] = row["DUE DATE"].strftime('%d/%m/%y') if row['DUE DATE'].class == Date
     due_date = row["DUE DATE"].strip.split("/")
     due_date = row["DUE DATE"].strip.split('-') if (due_date.length == 1 || due_date.blank?)
-    
+
     if due_date.length == 3
       day = due_date[0]
       month = due_date[1]
@@ -101,9 +105,11 @@ class TransactionExcelImporter
       year = date[2].to_i < 2000 ? (date[2].to_i + 2000) : date[2]
       @date = [day,month,year].join('/')
     end
-    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (@date.blank? || final_due_date.blank?)
+    raise ArgumentError.new("Incorrect Data found in row #{@i} from date or final date is absent and the data was #{row} and sheet is #{@worksheet} ") if (@date.blank? || final_due_date.blank?)
     @target_no_of_days = (Date.parse(final_due_date) - Date.parse(@date)).to_i
-    raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ") if (@target_no_of_days < 0)
+    #debugger if (@target_no_of_days < 0)
+
+    raise ArgumentError.new("Incorrect Data found in row #{@i} from due date is less than transaction date and the data was #{row} and sheet is #{@worksheet} ") if (@target_no_of_days < 0)
 	end
 
   def open_spreadsheet file
@@ -117,7 +123,7 @@ class TransactionExcelImporter
 
 	def validate row
 		if row.values_at("PCS","NAME","C/O","RATE","TOTAL","DATE","TYPE","REGION").any?{|v|v.blank?}
-      raise ArgumentError.new("Incorrect Data found in row #{@i} and the data was #{row} and sheet is #{@worksheet} ")
+      raise ArgumentError.new("Incorrect Data found in row #{@i} from validate method and the data was #{row} and sheet is #{@worksheet} ")
     end
 	end
 

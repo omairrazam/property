@@ -1,4 +1,14 @@
 <p id="notice"><%= notice %></p>
+
+<%= form_tag import_transactions_path, :multipart => true do %>
+  <div class="form-group">
+    <%= file_field_tag :excel_file,:class => "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= submit_tag "Import", :class => "btn btn-primary" %>
+  </div>
+<% end %>
+
 <div id="customForm">
   <fieldset class="name">
       <legend>Name</legend>
@@ -24,7 +34,7 @@
   <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
       <thead>
           <tr>
-            <th></th>
+            <th>Pieces</th>
             <th>Category</th>
             <th>Region</th>
             <th>C/O</th>
@@ -34,14 +44,12 @@
             <th>Remaining Amount (Rs)</th>
             <th>Nature</th>
             <th>Mode</th>
+            <th>Transaction Date </th>
             <th>Alarm Date </th>
-            <th>Created On </th>
           </tr>
       </thead>
   </table>
 </div>
-
-
 
 <style type="text/css">
   #customForm {
