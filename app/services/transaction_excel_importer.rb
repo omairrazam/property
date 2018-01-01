@@ -11,7 +11,14 @@ class TransactionExcelImporter
       #next if worksheet == 'All-City_Buying-10-M'
       begin
         ActiveRecord::Base.transaction do
-          (7..@spreadsheet.sheet(worksheet).last_row).each do |i|
+          if SheetDatum.where(:sheet_name => worksheet.downcase).first.present?
+            sheet_index = SheetDatum.where(:sheet_name => worksheet.downcase).first
+            row_no = sheet_index.last_processed_index + 1
+            next if (row_no - 1) == @spreadsheet.sheet(worksheet).last_row
+          else
+            row_no = 7
+          end
+          (row_no..@spreadsheet.sheet(worksheet).last_row).each do |i|
             row = Hash[[@header, @spreadsheet.row(i)].transpose]
             @worksheet = worksheet
             @i = i
@@ -19,6 +26,7 @@ class TransactionExcelImporter
             process_row row
           end
         end
+        SheetDatum.create(:sheet_name => worksheet.downcase , :last_processed_index => @i)
         NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed for sheet #{worksheet}"}).deliver_now
       rescue Exception => e
        NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
