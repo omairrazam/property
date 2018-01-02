@@ -34,8 +34,8 @@ class Transaction < ApplicationRecord
   scope :with_nature, ->(nature){where(nature: nature)}
   scope :daily_sellings, ->{daily_all.with_nature(:selling).sum(&:total_amount)}
   scope :daily_buyings, ->{daily_all.with_nature(:buying).sum(&:total_amount)}
-  scope :current_mp, ->(nature){where('mode=? AND created_at BETWEEN ? AND ? AND nature = ?', Transaction.modes[:mp],Date.today.beginning_of_week, Date.today.next_week(:monday), Transaction.natures[nature.to_sym])}
-  scope :current_nmp, ->(nature){where('mode=? AND created_at BETWEEN ? AND ? AND nature = ?', Transaction.modes[:nmp],Date.today.beginning_of_week, Date.today.next_week(:monday), Transaction.natures[nature.to_sym])}
+  scope :current_mp, ->{where('mode=? AND created_at BETWEEN ? AND ? ', Transaction.modes[:mp],Date.today.beginning_of_week, Date.today.next_week(:monday))}
+  scope :current_nmp, ->{where('mode=? AND created_at BETWEEN ? AND ?', Transaction.modes[:nmp],Date.today.beginning_of_week, Date.today.next_week(:monday))}
   scope :only_parents, -> {where('father_id is NULL')}
   
   def pending?

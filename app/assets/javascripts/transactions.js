@@ -167,6 +167,7 @@ var table = $(divIdName).DataTable( {
             return  nt[0].toUpperCase() + nt.slice(1);
            } 
         },
+        { "data": "total_amount"},
         { "data": "total_amount",
           render: function(data,type,row){
             return  (row.total_amount * row.duplicate_count);
