@@ -1,7 +1,7 @@
 lock '3.4.1'
 
 set :application, 'property'
-set :repo_url, 'git@gitlab.com:omsolutionpk/property.git' # Edit this to match your repository
+set :repo_url, 'git@github.com:omairrazam/property.git' # Edit this to match your repository
 set :branch, :legend
 set :deploy_to, '/home/deploy/property'
 set :pty, true
