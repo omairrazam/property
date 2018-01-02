@@ -1,8 +1,8 @@
 lock '3.4.1'
 
 set :application, 'property'
-set :repo_url, 'git@gitlab.com:omsolutionpk/property.git' # Edit this to match your repository
-set :branch, :legend
+set :repo_url, 'git@github.com:omairrazam/property.git' # Edit this to match your repository
+set :branch, :master
 set :deploy_to, '/home/deploy/property'
 set :pty, true
 set :linked_files, %w{config/database.yml config/application.yml}
