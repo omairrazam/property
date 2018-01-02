@@ -22,7 +22,7 @@ require 'capistrano/deploy'
 # require 'capistrano/rails/assets'
 # require 'capistrano/rails/migrations'
 # require 'capistrano/passenger'
-
+require 'capistrano/sidekiq'
 require 'capistrano/bundler'
 require 'capistrano/rvm'
 require 'capistrano/rails/assets' # for asset handling add

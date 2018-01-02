@@ -4,7 +4,7 @@ set :application, 'property'
 set :repo_url, 'git@github.com:omairrazam/property.git' # Edit this to match your repository
 set :branch, :legend
 set :deploy_to, '/home/deploy/property'
-set :pty, true
+set :pty, false
 set :linked_files, %w{config/database.yml config/application.yml}
 set :linked_dirs, %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system public/uploads}
 set :keep_releases, 5
@@ -31,4 +31,20 @@ namespace :deploy do
   task :seed do
     run "cd #{current_path}; bundle exec rake db:seed RAILS_ENV=#{rails_env}"
   end
+end
+
+task :update_git_repo do
+	on release_roles :all do
+	  with fetch(:git_environmental_variables) do
+	    within repo_path do
+	      current_repo_url = execute :git, :config, :'--get', :'remote.origin.url'
+	      unless repo_url == current_repo_url
+	        execute :git, :remote, :'set-url', 'origin', repo_url
+	        execute :git, :remote, :update
+
+	        execute :git, :config, :'--get', :'remote.origin.url'
+	      end
+	    end
+	  end
+	end
 end
