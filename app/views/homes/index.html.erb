@@ -9,6 +9,7 @@
   </div>
 </div> -->
 
+
 <div class="row">
   <div class="col-lg-12 col-md-6" >
     <!-- <div class="well">
@@ -22,16 +23,18 @@
         <%#= submit_tag "Search"%>
     <% end %></br>
 
-    <ul class="nav nav-tabs">
-      <li class="active sais-tab"><a data-toggle="tab" role="tab" data-target="#buying_tab">Buying</a></li>
-      <li class="azed-tab"><a data-toggle="tab" role="tab" data-target="#selling_tab">Selling</a></li>
-    </ul>
+    
 
+    <br>
+   
     <div class="tab-content">
+      <%= render 'global_search' %>
+
       <div id="buying_tab" class="tab-pane fade in active" role="tabpanel">
-        <table id="b_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
+        <table id="b_table" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
           <thead>
               <tr>
+                <th>Pieces</th>
                 <th>Category</th>
                 <th>Region</th>
                 <th>C/O</th>
@@ -45,12 +48,14 @@
                 <th>Alarm Date </th>
              </tr>
           </thead>
+          
         </table>
       </div>
       <div id="selling_tab" class="tab-pane fade in" role="tabpanel">
         <table id="s_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
             <tr>
+              <th>Pieces</th>
               <th>Category</th>
               <th>Region</th>
               <th>C/O</th>
@@ -71,13 +76,7 @@
 </div>
 <hr>
 <!-- /.row -->
-<!-- <div class="row">
-    <div class="col-lg-12">
-        <div class="well">
-            <div id="container" style="height: 400px; min-width: 310px"></div>
-        </div>
-    </div>
-</div> -->
+
 
 <script type="text/javascript">
 function createChart() {
@@ -137,13 +136,63 @@ $(document).ready(function() {
     $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
     } );
+
+    $("#b_table").append('<tfoot class="tfoot"><th></th></tfoot>');
     $('#b_table').DataTable({
-        dom: "Bfrtip",
+        "dom": '<"toolbar">frtip',
         "ajax": "/homes/index.json?mode="+$('#mode').val()+"&tab="+"buying",
+        
+        "drawCallback": function( settings ) {
+          if(settings.aoData[0]){
+            //console.log(settings.aoData[0]._aData);
+            //$('.dummy').html(settings.aoData[0]._aData.total_amount);
+
+            var api = this.api(), data;
+ 
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+ 
+            // Total over all pages
+            total = api
+                .column( 5 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Total over this page
+            pageTotal = api
+                .column( 5, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // // Update footer
+            // $( api.column( 5 ).footer() ).html(
+            //     '$'+pageTotal +' ( $'+ total +' total)'
+            // );
+
+            //$(this.footer()).html(pageTotal);
+
+          }
+        },
+        buttons: [
+            { extend: 'print', footer: true },
+            { extend: 'excelHtml5', footer: true },
+            { extend: 'csvHtml5', footer: true },
+            { extend: 'pdfHtml5', footer: true }
+        ],
         scrollY:        200,
         scrollCollapse: true,
         paging:         false,
         "columns": [
+          { "data": "duplicate_count" },
           { "data": "category.fullname" },
           { "data": "region.title" },
           { "data": "care_of.username" },
@@ -187,58 +236,7 @@ $(document).ready(function() {
       ],
     })
 
-    $('#s_table').DataTable({
-       
-       dom: "Bfrtip",
-       "cache": true,
-        scrollY:        200,
-        scrollCollapse: true,
-        paging:         false,
-        "ajax": "/homes/index.json?mode="+$('#mode').val()+"&tab="+"selling",
-         
-        "columns": [
-          { "data": "category.fullname"},
-          { "data": "region.title" },
-          { "data": "care_of.username" },
-          { "data": "trader.username" },
-          { "data": "total_amount",
-            render: function(data,type,row){
-              return  (row.total_amount * row.duplicate_count);
-            } 
-          },
-          { "data": "recieved_amount",
-            render: function(data,type,row){
-              return  (row.recieved_amount * row.duplicate_count);
-            }
-          },
-          { "data": "remaining_amount",
-            render: function(data,type,row){
-              return  (row.remaining_amount * row.duplicate_count);
-            }
-          },
-          { "data": "nature",
-             render:function (value) {
-              var nt = value;
-              return  nt[0].toUpperCase() + nt.slice(1);
-             } 
-          },
-          { "data": "mode" },
-          { "data": "transaction_date",
-             "type": 'datetime',
-             render:function (value) {
-              var dt = new Date(value);
-              return dt.toLocaleDateString();
-            } 
-          },
-          { "data": "alarm_date",
-             "type": 'datetime',
-             render:function (value) {
-              var dt = new Date(value);
-              return dt.toLocaleDateString();
-            } 
-          }
-      ]
-    })
+    
 });
 
 
@@ -247,13 +245,9 @@ $('.js_t_search').on('change',function(){
     var table = $('#b_table').DataTable();
     table.ajax.reload();
     table.ajax.url( "/homes/index.json?mode="+$('#mode').val()+"&tab="+"buying").load();
-    var table = $('#s_table').DataTable();
-    table.ajax.reload();
-    table.ajax.url( "/homes/index.json?mode="+$('#mode').val()+"&tab="+"selling").load();
+   
 });
 
-   //homeSellingTable();
-// });
 </script>
 <style>
   .toolbar {
@@ -264,3 +258,32 @@ $('.js_t_search').on('change',function(){
   }
 </style>
 
+
+
+<script>
+$("div.toolbar").html('<b>Custom tool bar! Text/images etc.</b>');
+function filterGlobal () {
+    $('#b_table').DataTable().search(
+        $('#global_filter').val(),
+        $('#global_regex').prop('checked'),
+        $('#global_smart').prop('checked')
+    ).draw();
+}
+ 
+function filterColumn ( i ) {
+    $('#b_table').DataTable().column( i ).search(
+        $('#col'+i+'_filter').val(),
+        false,
+        true
+    ).draw();
+}
+ 
+$(document).ready(function() {
+    $('#b_table').DataTable();
+ 
+    $('input.column_filter').on( 'keyup click', function () {
+        filterColumn( $(this).parents('td').attr('data-column') );
+    } );
+} );
+
+</script>

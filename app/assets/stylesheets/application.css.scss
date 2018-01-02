@@ -15,8 +15,14 @@
  *= require_self
  */
 
+li.tab{
+	cursor: pointer;
+}
+.dataTables_wrapper{
+	padding-top:20px;
+}
 table.dataTable{
-	font-size:12px;
+	font-size:10px;
 }
 .navbar-static-top {
     z-index: 1; 
