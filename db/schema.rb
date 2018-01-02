@@ -10,10 +10,98 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20171209062106) do
+ActiveRecord::Schema.define(version: 20180101150739) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "base_amounts", force: :cascade do |t|
+    t.integer "amount"
+    t.datetime "tareekh"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "category_id"
+    t.index ["category_id"], name: "index_base_amounts_on_category_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "name"
+    t.integer "size"
+    t.integer "unit"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "pod_days"
+    t.integer "base_amount", default: 0
+  end
+
+  create_table "installments", force: :cascade do |t|
+    t.integer "amount"
+    t.datetime "target_date"
+    t.bigint "plot_file_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["plot_file_id"], name: "index_installments_on_plot_file_id"
+  end
+
+  create_table "people", force: :cascade do |t|
+    t.string "username"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["username"], name: "index_people_on_username", unique: true
+  end
+
+  create_table "plot_files", force: :cascade do |t|
+    t.text "serial_no"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.bigint "category_id"
+    t.bigint "region_id"
+    t.integer "state"
+    t.index ["category_id"], name: "index_plot_files_on_category_id"
+    t.index ["region_id"], name: "index_plot_files_on_region_id"
+  end
+
+  create_table "regions", force: :cascade do |t|
+    t.string "title"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "sheet_data", force: :cascade do |t|
+    t.string "sheet_name"
+    t.integer "last_processed_index"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "transactions", force: :cascade do |t|
+    t.string "unique_id"
+    t.string "temporary_id"
+    t.bigint "plot_file_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.integer "total_amount", default: 0
+    t.integer "recieved_amount", default: 0
+    t.datetime "target_date"
+    t.integer "mode"
+    t.integer "target_date_in_days"
+    t.integer "nature"
+    t.bigint "category_id"
+    t.bigint "region_id"
+    t.bigint "father_id"
+    t.integer "duplicate_count", default: 0
+    t.string "excel_file"
+    t.integer "imported_from"
+    t.datetime "transaction_date"
+    t.bigint "care_of_id"
+    t.bigint "trader_id"
+    t.index ["care_of_id"], name: "index_transactions_on_care_of_id"
+    t.index ["category_id"], name: "index_transactions_on_category_id"
+    t.index ["father_id"], name: "index_transactions_on_father_id"
+    t.index ["plot_file_id"], name: "index_transactions_on_plot_file_id"
+    t.index ["region_id"], name: "index_transactions_on_region_id"
+    t.index ["trader_id"], name: "index_transactions_on_trader_id"
+  end
 
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
@@ -33,8 +121,29 @@ ActiveRecord::Schema.define(version: 20171209062106) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "avatar"
+    t.integer "role"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  create_table "versions", force: :cascade do |t|
+    t.string "item_type", null: false
+    t.integer "item_id", null: false
+    t.string "event", null: false
+    t.string "whodunnit"
+    t.text "object"
+    t.datetime "created_at"
+    t.index ["item_type", "item_id"], name: "index_versions_on_item_type_and_item_id"
+  end
+
+  add_foreign_key "base_amounts", "categories"
+  add_foreign_key "installments", "plot_files"
+  add_foreign_key "plot_files", "categories"
+  add_foreign_key "plot_files", "regions"
+  add_foreign_key "transactions", "categories"
+  add_foreign_key "transactions", "people", column: "care_of_id"
+  add_foreign_key "transactions", "people", column: "trader_id"
+  add_foreign_key "transactions", "plot_files"
+  add_foreign_key "transactions", "regions"
+  add_foreign_key "transactions", "transactions", column: "father_id"
 end

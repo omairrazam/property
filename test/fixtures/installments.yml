@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  amount: 1
+  target_date: 2017-12-09 22:38:15
+  plot_file: one
+
+two:
+  amount: 1
+  target_date: 2017-12-09 22:38:15
+  plot_file: two

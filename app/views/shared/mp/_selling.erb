@@ -1,0 +1,36 @@
+<h1>MP Selling</h1>
+<table id="mp_stocks" class="display dataTable no-footer" cellspacing="0" width="100%">
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Region</th>
+      <th>C/O</th>
+      <th>Trader</th>
+      <th>Total Amount (Rs)</th>
+      <th>Received Amount (Rs)</th>
+      <th>Remaining Amount (Rs)</th>
+      <th>Nature</th>
+      <th>Mode</th>
+      <th>Alarm Date </th>
+      <th>Created On </th>
+    </tr>
+  </thead>
+      
+  <tbody>
+    <% @mp_selling.each do |mode| %>
+      <tr>
+        <td><%= mode.category.name %></td>
+        <td><%= mode.region.title %></td>
+        <td><%= mode.care_of.username %></td>
+        <td><%= mode.trader.username %></td>
+        <td><%= mode.total_amount%></td>
+        <td><%= mode.recieved_amount%></td>
+        <td><%= mode.remaining_amount%></td>
+        <td><%= mode.nature%></td>
+        <td><%= mode.mode%></td>
+        <td><%= %></td>
+        <td><%= mode.created_at%></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

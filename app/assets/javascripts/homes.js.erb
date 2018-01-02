@@ -1,0 +1,4 @@
+ var seriesOptions = [],
+    d=[],
+    seriesCounter = 0,
+    names = <%= Transaction.modes.keys.map{|t|[ t.split('_').map(&:capitalize).join(' '), t]} %>;

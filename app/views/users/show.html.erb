@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @user.name %>
+</p>
+
+<p>
+  <strong>Base amount:</strong>
+  <%= @user.base_amount %>
+</p>
+
+<p>
+  <strong>Size:</strong>
+  <%= @user.size %>
+</p>
+
+<p>
+  <strong>Unit:</strong>
+  <%= @user.unit %>
+</p>
+
+<%= link_to 'Edit', edit_category_path(@user) %> |
+<%= link_to 'Back', categories_path %>

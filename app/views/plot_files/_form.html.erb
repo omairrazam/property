@@ -1,0 +1,17 @@
+<%= form_with(model: plot_file, local: true) do |form| %>
+  <% if plot_file.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(plot_file.errors.count, "error") %> prohibited this plot_file from being saved:</h2>
+
+      <ul>
+      <% plot_file.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>

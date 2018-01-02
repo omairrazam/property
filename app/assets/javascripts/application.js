@@ -12,6 +12,14 @@
 //
 //= require rails-ujs
 //= require jquery
-//= require jquery_ujs
-//= require turbolinks
+// require jquery_ujs
+// require turbolinks
 //= require_tree .
+
+var datatableAjaxError = function (xhr, textStatus, errorThrown) {
+    var msg = JSON.parse(xhr.responseText);
+    var key = Object.keys(msg)[0];
+    var value = msg[Object.keys(msg)[0]];
+    alert(key+' : '+value);
+}
+

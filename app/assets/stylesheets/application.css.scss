@@ -10,6 +10,34 @@
  * files in this directory. Styles in this file should be added after the last require_* statement.
  * It is generally better to create a new file per style scope.
  *
+ *= require font-awesome
  *= require_tree .
  *= require_self
  */
+
+li.tab{
+	cursor: pointer;
+}
+.dataTables_wrapper{
+	padding-top:20px;
+}
+table.dataTable{
+	font-size:10px;
+}
+.navbar-static-top {
+    z-index: 1; 
+    border-width: 0 0 1px;
+}
+
+.highlight{
+	background-color: lightblue;
+	color:white;
+}
+
+td.details-control {
+    background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+    cursor: pointer;
+}
+tr.shown td.details-control {
+    background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+}
