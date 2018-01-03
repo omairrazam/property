@@ -77,14 +77,14 @@ $(function(){
             }
         },
         {
-            label: "TotalAmount:",
+            label: "Total Amount/Piece:",
             name: "total_amount",
             attr:{
                 type: "number"
             }
         },
         {
-            label: "Received Amount:",
+            label: "Received Amount/Piece:",
             name: "recieved_amount",
             attr:{
                 type: "number"
