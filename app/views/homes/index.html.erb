@@ -23,10 +23,10 @@
         <%#= submit_tag "Search"%>
     <% end %></br>
 
-    
+
 
     <br>
-   
+
     <div class="tab-content">
       <%= render 'global_search' %>
 
@@ -48,7 +48,7 @@
                 <th>Alarm Date </th>
              </tr>
           </thead>
-          
+
         </table>
       </div>
       <div id="selling_tab" class="tab-pane fade in" role="tabpanel">
@@ -83,7 +83,7 @@ function createChart() {
 
     Highcharts.stockChart('container', {
 
-        rangeSelector: {    
+        rangeSelector: {
             selected: 4
         },
 
@@ -125,30 +125,31 @@ $(function(){
        {name: names[4][0],data: <%= Transaction.order('created_at ASC').with_mode(:bop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
        {name: names[5][0],data: <%= Transaction.order('created_at ASC').with_mode(:pod).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
   ];
-  //createChart(); 
+  //createChart();
 });
 
 
 // Table Tabs //
 
 $(document).ready(function() {
-  
+
     $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
         $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
     } );
 
     $("#b_table").append('<tfoot class="tfoot"><th></th></tfoot>');
     $('#b_table').DataTable({
+        "sPaginationType": "full_numbers",
         "dom": '<"toolbar">frtip',
         "ajax": "/homes/index.json?mode="+$('#mode').val()+"&tab="+"buying",
-        
+
         "drawCallback": function( settings ) {
           if(settings.aoData[0]){
             //console.log(settings.aoData[0]._aData);
             //$('.dummy').html(settings.aoData[0]._aData.total_amount);
 
             var api = this.api(), data;
- 
+
             // Remove the formatting to get integer data for summation
             var intVal = function ( i ) {
                 return typeof i === 'string' ?
@@ -156,7 +157,7 @@ $(document).ready(function() {
                     typeof i === 'number' ?
                         i : 0;
             };
- 
+
             // Total over all pages
             total = api
                 .column( 5 )
@@ -164,7 +165,7 @@ $(document).ready(function() {
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0 );
- 
+
             // Total over this page
             pageTotal = api
                 .column( 5, { page: 'current'} )
@@ -172,7 +173,7 @@ $(document).ready(function() {
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0 );
- 
+
             // // Update footer
             // $( api.column( 5 ).footer() ).html(
             //     '$'+pageTotal +' ( $'+ total +' total)'
@@ -190,7 +191,7 @@ $(document).ready(function() {
         ],
         scrollY:        200,
         scrollCollapse: true,
-        paging:         false,
+        paging:         true,
         "columns": [
           { "data": "duplicate_count" },
           { "data": "category.fullname" },
@@ -200,7 +201,7 @@ $(document).ready(function() {
           { "data": "total_amount",
             render: function(data,type,row){
               return  (row.total_amount * row.duplicate_count);
-            } 
+            }
           },
           { "data": "recieved_amount",
             render: function(data,type,row){
@@ -216,7 +217,7 @@ $(document).ready(function() {
              render:function (value) {
               var nt = value;
               return  nt[0].toUpperCase() + nt.slice(1);
-             } 
+             }
           },
           { "data": "mode" },
           { "data": "transaction_date",
@@ -224,19 +225,19 @@ $(document).ready(function() {
              render:function (value) {
               var dt = new Date(value);
               return dt.toLocaleDateString();
-            } 
+            }
           },
           { "data": "target_date",
              "type": 'datetime',
              render:function (value) {
               var dt = new Date(value);
               return dt.toLocaleDateString();
-            } 
+            }
           }
       ],
     })
 
-    
+
 });
 
 
@@ -245,7 +246,7 @@ $('.js_t_search').on('change',function(){
     var table = $('#b_table').DataTable();
     table.ajax.reload();
     table.ajax.url( "/homes/index.json?mode="+$('#mode').val()+"&tab="+"buying").load();
-   
+
 });
 
 </script>
@@ -269,7 +270,7 @@ function filterGlobal () {
         $('#global_smart').prop('checked')
     ).draw();
 }
- 
+
 function filterColumn ( i ) {
     $('#b_table').DataTable().column( i ).search(
         $('#col'+i+'_filter').val(),
@@ -277,10 +278,10 @@ function filterColumn ( i ) {
         true
     ).draw();
 }
- 
+
 $(document).ready(function() {
     $('#b_table').DataTable();
- 
+
     $('input.column_filter').on( 'keyup click', function () {
         filterColumn( $(this).parents('td').attr('data-column') );
     } );
