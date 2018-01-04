@@ -19,7 +19,7 @@ class TransactionExcelImporter
             row_no = 7
           end
           (row_no..@spreadsheet.sheet(worksheet).last_row).each do |i|
-            row = Hash[[@header, @spreadsheet.row(i)].transpose]
+            row = Hash[[@header, @spreadsheet.row(i)[0..9]].transpose]
             @worksheet = worksheet
             @i = i
             get_category_and_nature worksheet
@@ -27,9 +27,9 @@ class TransactionExcelImporter
           end
         end
         SheetDatum.create(:sheet_name => worksheet.downcase , :last_processed_index => @i)
-        NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed for sheet #{worksheet}"}).deliver_now
+       NotificationMailer.import_file_upload_email({:msg => "File Import is successfully completed for sheet #{worksheet}"}).deliver_now
       rescue Exception => e
-       NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
+      NotificationMailer.import_file_upload_email({:msg => "Got Exception #{e.message}"}).deliver_now
       end
     end
 	end
