@@ -30,6 +30,7 @@ gem 'devise'
 gem 'carrierwave', '~> 1.0'
 gem 'roo'
 gem 'sidekiq'
+gem 'kaminari'
 # Use Redis adapter to run Action Cable in production
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
@@ -70,6 +71,3 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'stateful_enum'
 gem "font-awesome-rails"
 gem 'paper_trail'
-
-
-
