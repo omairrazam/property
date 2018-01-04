@@ -1,2 +1,2 @@
 production:
-	logfile: ./log/sidekiq.log
+  logfile: ./log/sidekiq.log
