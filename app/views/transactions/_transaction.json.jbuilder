@@ -4,7 +4,7 @@ json.extract! transaction,:id, :plot_file_id ,:total_amount,:recieved_amount,:re
 
 json.children transaction.children.as_json 
 
-json.category do 
+json.category do
 	json.fullname transaction.category.fullname
 end
 json.region do 
