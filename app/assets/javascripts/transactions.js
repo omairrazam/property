@@ -236,6 +236,18 @@ var table = $(divIdName).DataTable( {
                   'pdf',
                   'print'
               ]
+          },
+          {
+            extend: "selected",
+            text: "Clear It",
+            action: function ( e, dt, node, config ) {
+              console.log(e.id);
+              console.log(dt);
+              console.log(node);
+              console.log( table.row( { selected: true } ).index() );
+              // Immediately add `250` to the value of the salary and submit
+              dt.ajax.reload();
+            }
           }
       ]
   });

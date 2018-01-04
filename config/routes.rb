@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :transactions do
     collection do
       post :import
+      post :clear_it
     end
   end
   resources :plot_files

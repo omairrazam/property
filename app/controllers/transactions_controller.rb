@@ -1,5 +1,5 @@
 class TransactionsController < ApplicationController
-  before_action :set_transaction, only: [:show, :edit, :update, :destroy]
+  before_action :set_transaction, only: [:show, :edit, :update, :destroy,:clear_it]
 
   def index
     @transactions = Transaction.only_parents.includes(:children,:category,:region, :care_of, :trader).order('id desc').limit(10)
@@ -56,6 +56,16 @@ class TransactionsController < ApplicationController
       redirect_to transactions_url, notice: 'Transactions are being imported. You will be informed about the progress via email.'
     else
       redirect_to transactions_url, notice: 'Please add a file to import transactions. Thanks'
+    end
+  end
+
+  def clear_it
+    total_amount = @transaction.total_amount
+    @transaction.recieved_amount = total_amount
+    @transaction.save
+    respond_to do |format|
+      format.html { redirect_to transactions_url, notice: 'Transaction was successfully destroyed.' }
+      format.json { head :no_content }
     end
   end
 
