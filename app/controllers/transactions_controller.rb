@@ -2,7 +2,7 @@ class TransactionsController < ApplicationController
   before_action :set_transaction, only: [:show, :edit, :update, :destroy]
 
   def index
-    @transactions = Transaction.only_parents.includes(:children,:category,:region, :care_of, :trader).order('id desc').limit(10)
+    @transactions = Transaction.only_parents.includes(:children,:category,:region, :care_of, :trader).distinct.order('id desc')
   end
 
   def show
@@ -18,6 +18,7 @@ class TransactionsController < ApplicationController
   def create
     begin
       @transactions = Transaction.create_in_bulk(transaction_params)
+      @transactions = @transactions.select{|t|t.children.present?}
       respond_to do |format|
         format.json { render :show, status: :created}
       end
@@ -31,8 +32,9 @@ class TransactionsController < ApplicationController
   def update
     respond_to do |format|
       if @transaction.update(transaction_params)
+        @transactions =[@transaction] # for datatable
         format.html { redirect_to @transaction, notice: 'Transaction was successfully updated.' }
-        format.json { render :show, status: :ok, location: @transaction }
+        format.json { render :show, status: :ok}
       else
         format.html { render :edit }
         format.json { render json: @transaction.errors, status: :unprocessable_entity }
@@ -67,8 +69,8 @@ class TransactionsController < ApplicationController
     def transaction_params
       params.require(:transaction).permit(
         :total_amount,:plot_file_id,:category_id,
-        :recieved_amount,:target_date,:care_of_id,:region_id,
-        :trader_id, :mode, :nature, :target_date_in_days, :duplicate_count
+        :recieved_amount,:target_date,:care_of_id,:region_id,:transaction_date,
+        :trader_id, :mode, :nature, :target_date_in_days, :duplicate_count, :comment
         )
     end
 end

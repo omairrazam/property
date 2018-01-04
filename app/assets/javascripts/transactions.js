@@ -53,6 +53,9 @@ $(function(){
             remove: {
                 type: 'DELETE',
                 url:  ''+entity+'/_id_.json',
+                data: function(d){
+                    return {}
+                },
                 error: datatableAjaxError
             }
         },
@@ -77,14 +80,14 @@ $(function(){
             }
         },
         {
-            label: "Total Amount/Piece:",
+            label: "Per Piece Amount:",
             name: "total_amount",
             attr:{
                 type: "number"
             }
         },
         {
-            label: "Received Amount/Piece:",
+            label: "Total Received Amount",
             name: "recieved_amount",
             attr:{
                 type: "number"
@@ -94,6 +97,11 @@ $(function(){
             label: "Nature",
             name: "nature",
             type: "select"
+        },
+        {
+            label: "Transaction Date",
+            name: "transaction_date",
+            type: "datetime"
         },
         {
             label: "C/O:",
@@ -109,6 +117,11 @@ $(function(){
             label: "Mode:",
             name: "mode",
             type: "select"
+        },
+        
+        {
+            label: "Comment:",
+            name: "comment",
         },
         {
             label: "Extension Days:",
@@ -196,7 +209,7 @@ var table = $(divIdName).DataTable( {
            }  
         },
         { "data": "transaction_date",
-           "type": 'datetime',
+           "type": 'date',
            render:function (value) {
             var dt = new Date(value);
             return dt.toLocaleDateString();
@@ -209,6 +222,8 @@ var table = $(divIdName).DataTable( {
             return dt.toLocaleDateString();
           } 
         },
+        { "data": "comment" },
+
         
     ],
       lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],

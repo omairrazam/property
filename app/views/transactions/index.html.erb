@@ -16,6 +16,8 @@
       <editor-field name="region_id"></editor-field>
       <editor-field name="nature"></editor-field>
       <editor-field name="mode"></editor-field>
+      <editor-field name="target_date_in_days"></editor-field>
+      <editor-field name="transaction_date"></editor-field>
   </fieldset>
   <fieldset class="office">
       <legend>Amounts</legend>
@@ -25,9 +27,12 @@
   </fieldset>
   <fieldset class="hr">
       <legend>Traders</legend>
-      <editor-field name="target_date_in_days"></editor-field>
       <editor-field name="trader_id"></editor-field>
       <editor-field name="care_of_id"></editor-field>
+  </fieldset>
+  <fieldset class="name">
+      <legend>Others</legend>
+      <editor-field name="comment"></editor-field>
   </fieldset>
 </div>
 <div class="datatable">
@@ -47,6 +52,7 @@
             <th>Mode</th>
             <th>Transaction Date </th>
             <th>Alarm Date </th>
+            <th>Comment</th>
           </tr>
       </thead>
   </table>

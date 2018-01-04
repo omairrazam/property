@@ -3,7 +3,9 @@ class Transaction < ApplicationRecord
   attr_accessor :is_new
 
   has_paper_trail
-  before_create :figure_out_target_date
+  before_save :look_for_piece_change
+  before_save :figure_out_target_date
+
   after_create :init
   #care of  and trader must not be same validation
   belongs_to :plot_file, optional: true
@@ -20,7 +22,7 @@ class Transaction < ApplicationRecord
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
   validates_presence_of :excel_file, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
-  validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count
+  validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count, :transaction_date
   validates :total_amount, numericality: { greater_than: 0 }
   validates :duplicate_count, numericality: { greater_than: 0 } 
   validates :recieved_amount, numericality: { greater_than_or_equal_to: 0 }
@@ -57,24 +59,29 @@ class Transaction < ApplicationRecord
       new_ones << parent
       raise ArgumentError.new("Duplicate Count missing, cannot create child") if parent.duplicate_count.blank?
       (2..parent.duplicate_count).each do 
-        child = parent.dup
-        child.father_id = parent.id
-        child.save!
+        child = parent.create_child
         new_ones << child
       end
       new_ones
     end
   end
 
+  def create_child
+    child = self.dup
+    child.father_id = self.id
+    child.save!
+    child
+  end
+
   private
   def figure_out_target_date
   	self.target_date = case mode.try(:to_sym)
   	when :mp
-      Date.today.next_week(:monday)
+      self.transaction_date.next_week(:monday)
   	when :nmp
-      Date.today.next_week(:monday).next_week(:monday)
-    when :tmp
-      Date.today.next_week(:monday).next_week(:tuesday)
+      self.transaction_date.next_week(:monday).next_week(:monday)
+    when :tp
+      self.transaction_date.next_week(:tuesday)
   	when :bop,:sop
       raise ArgumentError.new("mode is (sop,bop) but target_date_in_days is missing, can't calculate target_date of transaction") if target_date_in_days.blank?
       target_date_in_days.days.from_now
@@ -90,9 +97,26 @@ class Transaction < ApplicationRecord
   	end
   end
 
+  def look_for_piece_change
+    return if self.new_record?
+    if duplicate_count_changed?
+      diff = duplicate_count - duplicate_count_was
+      if diff > 0
+        diff.abs.times do
+          self.create_child
+        end
+
+      elsif diff < 0
+        diff.abs.times do
+          self.children.last.destroy
+        end
+      end
+    end
+  end
+
   def amount_calculation
-    if total_amount.to_i < recieved_amount.to_i 
-      errors.add(:base, "Total should be greater than recieved amount")
+    if total_amount.to_i * duplicate_count < recieved_amount.to_i 
+      errors.add(:base, "Recieved amount cannot be greater than agreed amount i.e pieces * per_piece_amount")
     end
   end
 

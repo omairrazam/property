@@ -2,7 +2,7 @@ lock '3.4.1'
 
 set :application, 'property'
 set :repo_url, 'git@github.com:omairrazam/property.git' # Edit this to match your repository
-set :branch, :master
+set :branch, :legend
 set :deploy_to, '/home/deploy/property'
 set :pty, false
 set :linked_files, %w{config/database.yml config/application.yml}
@@ -56,7 +56,7 @@ namespace :sidekiq do
     invoke 'sidekiq:start'
   end
 
-  before 'deploy:finished', 'sidekiq:restart'
+  #before 'deploy:finished', 'sidekiq:restart'
 
   task :stop do
     on roles(:app) do
@@ -70,7 +70,7 @@ namespace :sidekiq do
   task :start do
     on roles(:app) do
       within current_path do
-        execute :bundle, "exec sidekiq -e #{fetch(:stage)} -C config/sidekiq.yml -d"
+        execute :bundle, "exec sidekiq -e #{fetch(:stage)} -C config/sidekiq.yml -L log/sidekiq.log -d"
       end
     end
   end

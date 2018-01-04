@@ -39,22 +39,25 @@ class TransactionExcelImporter
     get_region row
     get_mode row
     validate_region_mode row
-
-    Transaction.create_in_bulk(
-      :duplicate_count => row["PCS"],
-      :care_of => Person.where(:username => row["C/O"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["C/O"].downcase.strip.tr(" ", "_")),
-      :trader => Person.where(:username => row["NAME"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["NAME"].downcase.strip.tr(" ", "_")),
-      :total_amount => row["RATE"],
-      :recieved_amount => row["TOTAL"]/row["PCS"],
-      :transaction_date => @date,
-      :category => @category[0],
-      :region => @region[0],
-      :nature => @nature[0],
-      :imported_from => 1, #saved from file
-      :excel_file => @file,
-      :mode => @mode[0],
-      :target_date_in_days => @target_no_of_days
-    )
+    begin
+      Transaction.create_in_bulk(
+        :duplicate_count => row["PCS"],
+        :care_of => Person.where(:username => row["C/O"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["C/O"].downcase.strip.tr(" ", "_")),
+        :trader => Person.where(:username => row["NAME"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["NAME"].downcase.strip.tr(" ", "_")),
+        :total_amount => row["RATE"],
+        :recieved_amount => row["TOTAL"]/row["PCS"],
+        :transaction_date => row['DATE'],
+        :category => @category[0],
+        :region => @region[0],
+        :nature => @nature[0],
+        :imported_from => 1, #saved from file
+        :excel_file => @file,
+        :mode => @mode[0],
+        :target_date_in_days => @target_no_of_days
+      )
+    rescue Exception => e
+      raise ArgumentError.new("Exceptions is #{e}. Incorrect Data found in row #{@i} from process_row, the data was #{row.as_json} and sheet is #{@worksheet} ") 
+    end
 	end
   
   def get_category_and_nature worksheet
