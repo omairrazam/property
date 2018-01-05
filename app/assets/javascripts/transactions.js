@@ -1,6 +1,18 @@
 $(function(){
     // Add event listener for opening and closing details
     
+    $('#datatable_transactions thead tr:eq(1) th').each( function () {
+        var title = $('#datatable_transactions thead tr:eq(0) th').eq( $(this).index() ).text();
+        $(this).html( '<input class="input-table-header" type="text" placeholder="Search '+title+'" />' );
+    } ); 
+  
+    $('body').on('focus','.input-table-header',function(){
+      $(this).css('width','95px');
+    });
+
+    $('body').on('blur','.input-table-header',function(){
+      $(this).css('width','25px');
+    });
 
     var editor; // use a global for the submit and return data rendering in the examples
     var entity = 'transactions';
@@ -88,7 +100,7 @@ $(function(){
         },
         {
             label: "Total Received Amount",
-            name: "recieved_amount",
+            name: "aggregate_recieved",
             attr:{
                 type: "number"
             }
@@ -152,8 +164,26 @@ var table = $(divIdName).DataTable( {
       ajax: {
           'url': "/"+entity+".json"
       },
+      "orderClasses": false,
+      orderCellsTop: true,
+      responsive: true,
+      "createdRow": function ( row, data, index ) {
+        if(data["paid"]){
+          $('td',row).eq(7).addClass('green');
+        }else{
+          $('td',row).eq(7).addClass('red');
+        }
 
-      order: [[ 10, "desc" ]],
+        if(data["is_new"]){
+          $('td',row).eq(0).addClass('pink');
+
+        }
+        // if ( data[5].replace(/[\$,]/g, '') * 1 > 150000 ) {
+        //     $('td', row).eq(5).addClass('highlight');
+        // }
+      },
+
+      order: [[ 11, "desc" ]],
       "columns": [
         { "data": "duplicate_count" },
         { "data": "category.fullname",
@@ -186,10 +216,7 @@ var table = $(divIdName).DataTable( {
             return  (row.total_amount * row.duplicate_count);
           }
         },
-        { "data": "recieved_amount",
-          render: function(data,type,row){
-            return  (row.recieved_amount * row.duplicate_count);
-          }
+        { "data": "aggregate_recieved"
         },
         { "data": "remaining_amount" ,
           render: function(data,type,row){
@@ -218,6 +245,9 @@ var table = $(divIdName).DataTable( {
         { "data": "target_date",
            "type": 'datetime',
            render:function (value) {
+            if(!value){
+              return '';
+            }
             var dt = new Date(value);
             return dt.toLocaleDateString();
           } 
@@ -249,11 +279,42 @@ var table = $(divIdName).DataTable( {
                   'excel',
                   'csv',
                   'pdf',
-                  'print'
+                  'print',
+
               ]
+          },
+          {
+                text: 'Clear IT',
+                action: function ( e, dt, node, config ) {
+                    editor
+                      .edit( table.row( { selected: true } ).index(), false )
+                      .set( 'aggregate_recieved', editor.get('total_amount' )*editor.get('duplicate_count'))
+                      .submit();
+
+                },
+                enabled: false
           }
       ]
   });
+
+   // Apply the search
+    table.columns().every(function (index) {
+        $('#datatable_transactions thead tr:eq(1) th:eq(' + index + ') input').on('keyup change', function () {
+            table.column($(this).parent().index() + ':visible')
+                .search(this.value)
+                .draw();
+        });
+    });
+
+    table.on( 'select deselect', function () {
+        var selectedRows = table.rows( { selected: true } ).count();
+        table.button( 4 ).enable( selectedRows === 1 );
+    } );
+
+    editor
+    .on( 'postSubmit', function ( e, json, data, action ) {
+        table.ajax.reload();
+    } )
 });
 
 // function child_data( d ) {

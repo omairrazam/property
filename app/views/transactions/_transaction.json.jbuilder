@@ -1,6 +1,6 @@
 json.id transaction.id
 json.extract! transaction,:id, :plot_file_id ,:total_amount,:recieved_amount,:remaining_amount,:target_date,
-:created_at,:transaction_date,:nature,:mode, :updated_at,:trader_id, :care_of_id, :target_date_in_days, :category_id, :region_id, :is_new,:duplicate_count,:comment
+:created_at,:transaction_date,:nature,:mode, :updated_at,:trader_id, :care_of_id, :target_date_in_days, :category_id, :region_id, :is_new,:duplicate_count,:comment, :paid, :aggregate_recieved
 
 json.children transaction.children.as_json 
 

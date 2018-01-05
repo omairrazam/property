@@ -1,3 +1,14 @@
+<style type="text/css">
+  
+  .input-table-header{
+    width: 20px ;
+  }
+
+  td{
+    width: 20px !important;
+  }
+</style>
+
 <p id="notice"><%= notice %></p>
 
 <%= form_tag import_transactions_path, :multipart => true do %>
@@ -23,7 +34,7 @@
       <legend>Amounts</legend>
       <editor-field name="duplicate_count"></editor-field>
       <editor-field name="total_amount"></editor-field>
-      <editor-field name="recieved_amount"></editor-field>
+      <editor-field name="aggregate_recieved"></editor-field>
   </fieldset>
   <fieldset class="hr">
       <legend>Traders</legend>
@@ -37,7 +48,24 @@
 </div>
 <div class="datatable">
   <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
+      <col width="30">
       <thead>
+          <tr>
+            <th>Pieces</th>
+            <th>Category</th>
+            <th>Region</th>
+            <th>C/O</th>
+            <th>Trader</th>
+            <th>Per Piece (Rs)</th>
+            <th>Total Amount (Rs)</th>
+            <th>Received Amount (Rs)</th>
+            <th>Remaining Amount (Rs)</th>
+            <th>Nature</th>
+            <th>Mode</th>
+            <th>Transaction Date </th>
+            <th>Alarm Date </th>
+            <th>Comment</th>
+          </tr>
           <tr>
             <th>Pieces</th>
             <th>Category</th>
@@ -97,3 +125,4 @@
 }
   
 </style>
+

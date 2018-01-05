@@ -17,8 +17,8 @@ class TransactionsController < ApplicationController
 
   def create
     begin
-      @transactions = Transaction.create_in_bulk(transaction_params)
-      @transactions = @transactions.select{|t|t.children.present?}
+      @transactions = Transaction.create_in_bulk(transaction_params).select{|t|t.father_id.blank?}
+
       respond_to do |format|
         format.json { render :show, status: :created}
       end
@@ -31,6 +31,7 @@ class TransactionsController < ApplicationController
 
   def update
     respond_to do |format|
+      
       if @transaction.update(transaction_params)
         @transactions =[@transaction] # for datatable
         format.html { redirect_to @transaction, notice: 'Transaction was successfully updated.' }
@@ -70,7 +71,7 @@ class TransactionsController < ApplicationController
       params.require(:transaction).permit(
         :total_amount,:plot_file_id,:category_id,
         :recieved_amount,:target_date,:care_of_id,:region_id,:transaction_date,
-        :trader_id, :mode, :nature, :target_date_in_days, :duplicate_count, :comment
+        :trader_id, :mode, :nature, :target_date_in_days, :duplicate_count, :comment, :aggregate_recieved
         )
     end
 end

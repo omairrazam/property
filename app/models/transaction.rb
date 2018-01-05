@@ -1,11 +1,11 @@
 class Transaction < ApplicationRecord
   mount_uploader :excel_file, ExcelImportUploader
-  attr_accessor :is_new
+  attr_accessor :is_new, :paid
 
   has_paper_trail
   before_save :look_for_piece_change
   before_save :figure_out_target_date
-
+  before_save :divide_recieved_amount
   after_create :init
   #care of  and trader must not be same validation
   belongs_to :plot_file, optional: true
@@ -21,7 +21,7 @@ class Transaction < ApplicationRecord
   enum imported_from: %i(panel file)
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
-  validates_presence_of :excel_file, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
+  #validates_presence_of :excel_file, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
   validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count, :transaction_date
   validates :total_amount, numericality: { greater_than: 0 }
   validates :duplicate_count, numericality: { greater_than: 0 } 
@@ -44,7 +44,7 @@ class Transaction < ApplicationRecord
     (total_amount > recieved_amount)
   end
 
-  def paid?
+  def paid
     (total_amount == recieved_amount)
   end
 
@@ -72,6 +72,7 @@ class Transaction < ApplicationRecord
     child.save!
     child
   end
+
 
   private
   def figure_out_target_date
@@ -112,6 +113,14 @@ class Transaction < ApplicationRecord
         end
       end
     end
+  end
+
+  def divide_recieved_amount
+    return if self.father_id.present?
+    per_piece = self.aggregate_recieved/self.duplicate_count
+    return if per_piece == recieved_amount
+    self.recieved_amount = per_piece
+    self.children.update(recieved_amount: per_piece)
   end
 
   def amount_calculation
