@@ -220,7 +220,7 @@ var table = $(divIdName).DataTable( {
         },
         { "data": "remaining_amount" ,
           render: function(data,type,row){
-            return  (row.remaining_amount * row.duplicate_count);
+            return  (row.total_amount * row.duplicate_count) - row.aggregate_recieved;
           }
         },
         { "data": "nature",

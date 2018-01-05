@@ -17,7 +17,7 @@ class Transaction < ApplicationRecord
   has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id', dependent: :destroy
 
   enum nature: %i(buying selling)
-  enum mode: %i(cash mp nmp bop sop pod custom tp)
+  enum mode: %i(cash mp nmp tp wp thp fp bop sop pod)
   enum imported_from: %i(panel file)
 
   validates_presence_of :target_date_in_days, if: Proc.new { |c| %i(sop bop).include?(c.mode.try(:to_sym)) }
@@ -83,6 +83,12 @@ class Transaction < ApplicationRecord
       self.transaction_date.next_week(:monday).next_week(:monday)
     when :tp
       self.transaction_date.next_week(:tuesday)
+    when :wp
+      self.transaction_date.next_week(:wednesday)
+    when :thp
+      self.transaction_date.next_week(:thursday)
+    when :fp
+      self.transaction_date.next_week(:friday)
   	when :bop,:sop
       raise ArgumentError.new("mode is (sop,bop) but target_date_in_days is missing, can't calculate target_date of transaction") if target_date_in_days.blank?
       target_date_in_days.days.from_now
