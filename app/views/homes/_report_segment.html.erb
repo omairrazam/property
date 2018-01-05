@@ -1,0 +1,32 @@
+<% transactions = Transaction.with_mode(mode) %>
+<% buyings  = transactions.with_nature('buying') %>
+<% sellings = transactions.with_nature('selling') %>
+<% buyings_total = buyings.inject(0){|tot,a| tot+a.total_amount} %>
+<% sellings_total = sellings.inject(0){|tot,a| tot+a.total_amount} %>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+  		<h5 class='text-center'><%=mode.humanize %></h5>
+   		<input type='date' name='abc'/>
+   		<input type='date' name='abc'/>
+   		<select>
+		  <option value="volvo">Volvo</option>
+		  <option value="saab">Saab</option>
+		  <option value="mercedes">Mercedes</option>
+		  <option value="audi">Audi</option>
+		</select>
+		<select>
+		  <option value="volvo">Volvo</option>
+		  <option value="saab">Saab</option>
+		  <option value="mercedes">Mercedes</option>
+		  <option value="audi">Audi</option>
+		</select>
+   </div>
+  <div class="panel-body">
+	  <p> Total Buyings: Rs: <%= buyings_total %></p>
+	  <p> Total Sellings: RS: <%= sellings_total %></p>
+	  <p> Net (sellings - buyings): Rs: <%= sellings_total - buyings_total%> </p>
+
+  </div>
+</div>
