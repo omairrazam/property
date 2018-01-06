@@ -1,5 +1,6 @@
+<%= link_to "New Person", new_person_path, id: 'new_person_link', remote: true, class: "btn btn-primary hide" %>
+
 <style type="text/css">
-  
   .input-table-header{
     width: 20px ;
   }
@@ -11,14 +12,7 @@
 
 <p id="notice"><%= notice %></p>
 
-<%= form_tag import_transactions_path, :multipart => true do %>
-  <div class="form-group">
-    <%= file_field_tag :excel_file,:class => "form-control" %>
-  </div>
-  <div class="form-group">
-    <%= submit_tag "Import", :class => "btn btn-primary" %>
-  </div>
-<% end %>
+
 
 <div id="customForm">
   <fieldset class="name">
@@ -50,6 +44,7 @@
   <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
       <col width="30">
       <thead>
+          
           <tr>
             <th>Pieces</th>
             <th>Category</th>
@@ -67,20 +62,20 @@
             <th>Comment</th>
           </tr>
           <tr>
-            <th>Pieces</th>
-            <th>Category</th>
-            <th>Region</th>
-            <th>C/O</th>
-            <th>Trader</th>
-            <th>Per Piece (Rs)</th>
-            <th>Total Amount (Rs)</th>
-            <th>Received Amount (Rs)</th>
-            <th>Remaining Amount (Rs)</th>
-            <th>Nature</th>
-            <th>Mode</th>
-            <th>Transaction Date </th>
-            <th>Alarm Date </th>
-            <th>Comment</th>
+            <th data-inputtype='number'>Pieces</th>
+            <th data-inputtype='text'>Category</th>
+            <th data-inputtype='text'>Region</th>
+            <th data-inputtype='text'>C/O</th>
+            <th data-inputtype='text'>Trader</th>
+            <th data-inputtype='text'>Per Piece (Rs)</th>
+            <th data-inputtype='text'>Total Amount (Rs)</th>
+            <th data-inputtype='text'>Received Amount (Rs)</th>
+            <th data-inputtype='text'>Remaining Amount (Rs)</th>
+            <th data-inputtype='text'>Nature</th>
+            <th data-inputtype='text'>Mode</th>
+            <th data-inputtype='date'>Transaction Date </th>
+            <th data-inputtype='date'>Alarm Date </th>
+            <th data-inputtype='text'>Comment</th>
           </tr>
       </thead>
   </table>

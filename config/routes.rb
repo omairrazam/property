@@ -17,7 +17,8 @@ Rails.application.routes.draw do
   resources :regions
   resources :categories
 
-
+  resources :people
+  
   devise_for :users, :skip => :registrations
   devise_scope :user do
   # resource :registration,

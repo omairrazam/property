@@ -1,0 +1,25 @@
+<%= form_for(person, remote: true, :html => { :role => "form" }) do |form| %>
+  <% if person.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(person.errors.count, "error") %> prohibited this person from being saved:</h2>
+
+      <ul>
+      <% person.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= form.label :user_name %>
+    <%= form.text_field :username, class: 'form-control' %>
+  </div>
+  
+  <button type="submit" class="btn btn-default">Submit</button>
+
+  
+<% end %>
+
+
+  

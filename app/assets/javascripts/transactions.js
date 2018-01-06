@@ -3,11 +3,21 @@ jQuery(function($){
     
     $('#datatable_transactions thead tr:eq(1) th').each( function () {
         var title = $('#datatable_transactions thead tr:eq(0) th').eq( $(this).index() ).text();
+        var type = $(this).data('inputtype')
         $(this).html( '<input class="input-table-header" type="text" placeholder="Search '+title+'" />' );
+        if(type == 'date'){
+          $(this).datepicker({
+              format: 'dd/mm/yyyy',
+          });
+        }
     } ); 
   
     $('body').on('focus','.input-table-header',function(){
       $(this).css('width','95px');
+    });
+
+    $('body').on('change','.input-table-header',function(){
+      console.log($(this).val());
     });
 
     $('body').on('blur','.input-table-header',function(){
@@ -293,6 +303,12 @@ var table = $(divIdName).DataTable( {
 
                 },
                 enabled: false
+          },
+          {
+            text: 'Add Person',
+            action: function ( e, dt, node, config ) {
+              Rails.fire($('#new_person_link')[0], 'click');
+            }
           }
       ]
   });
