@@ -1,32 +1,31 @@
-<% transactions = Transaction.with_mode(mode) %>
-<% buyings  = transactions.with_nature('buying') %>
-<% sellings = transactions.with_nature('selling') %>
-<% buyings_total = buyings.inject(0){|tot,a| tot+a.total_amount} %>
-<% sellings_total = sellings.inject(0){|tot,a| tot+a.total_amount} %>
+<% transactions = Transaction.with_mode(mode).due %>
+<% data = transactions.report %>
 
 
 <div class="panel panel-default">
-  <div class="panel-heading">
-  		<h5 class='text-center'><%=mode.humanize %></h5>
-   		<input type='date' name='abc'/>
-   		<input type='date' name='abc'/>
-   		<select>
-		  <option value="volvo">Volvo</option>
-		  <option value="saab">Saab</option>
-		  <option value="mercedes">Mercedes</option>
-		  <option value="audi">Audi</option>
-		</select>
-		<select>
-		  <option value="volvo">Volvo</option>
-		  <option value="saab">Saab</option>
-		  <option value="mercedes">Mercedes</option>
-		  <option value="audi">Audi</option>
-		</select>
-   </div>
-  <div class="panel-body">
-	  <p> Total Buyings: Rs: <%= buyings_total %></p>
-	  <p> Total Sellings: RS: <%= sellings_total %></p>
-	  <p> Net (sellings - buyings): Rs: <%= sellings_total - buyings_total%> </p>
-
-  </div>
+	<div class="panel-heading">
+			<h5 class='text-center label label-warning'><%=mode.humanize %></h5>
+			<%= form_tag dashboard_search_path, :method => 'get',:class => 'js-form-report', id: mode, data:{'mode':mode},remote: true do %>
+				<%= hidden_field_tag :mode,mode %>
+				<div class="row">
+				<div class="col-md-6" style="">
+					<small class='text-muted text-sm'>Date From</small><br>
+			   		<input class='search_from'type='date' name=<%= "start_"+mode %>><br>
+					<small class='text-muted'>Date To</small><br>
+			   		<input class='search_to' type='date' name=<%= "end_"+mode %>><br>
+		   		</div>
+		   		<div class="col-md-6">
+				<small class='text-muted'>C/O</small><br>
+		   		<%= select_tag "c_o_"+mode, options_from_collection_for_select(Person.all, "id", "username") , {:include_blank => 'choose ',class:'search_c_o', style: 'width:95%;'}%><br>
+				<small class='text-muted'>Trader</small><br>
+		      	<%= select_tag "trader_"+mode, options_from_collection_for_select(Person.all, "id", "username"), {:include_blank => 'choose ', class:'search_trader',style: 'width:95%;'} %>
+		      	</div>
+		      	</div>
+	  		<% end %>
+	</div>
+	<div class="panel-body" id='summary_<%=mode%>'>
+	  <%= render partial: 'summary', locals: {sellings:data[:sellings], buyings:data[:buyings]} %>
+	</div>
 </div>
+
+

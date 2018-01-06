@@ -15,4 +15,21 @@ class HomesController < ApplicationController
     end
 
   end
+
+  def dashboard_search
+    @mode = params[:mode]
+    transactions = Transaction.with_mode(@mode).due
+    from = params["start_#{@mode}"].to_datetime
+    to = params["end_#{@mode}"].to_datetime
+    transactions = transactions.in_range_alarm(from,to) if from.present? & to.present?
+    transactions = transactions.where(trader_id:params["trader_#{@mode}"]) if params["trader_#{@mode}"].present?
+    transactions = transactions.where(care_of_id:params["c_o_#{@mode}"]) if params["c_o_#{@mode}"].present?
+
+    @data = transactions.report 
+
+    respond_to do |format|
+        format.html
+        format.js
+    end
+  end
 end

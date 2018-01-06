@@ -31,14 +31,16 @@ class Transaction < ApplicationRecord
 
   before_validation :amount_calculation
 
-  scope :daily_all, ->{where('DATE(created_at)=?',Time.zone.now.beginning_of_day)}
+  scope :daily_all, ->{where('DATE(transaction_date)=?',Time.zone.now.beginning_of_day)}
   scope :with_mode, ->(mode){where(mode: mode)}
   scope :with_nature, ->(nature){where(nature: nature)}
   scope :daily_sellings, ->{daily_all.with_nature(:selling).sum(&:total_amount)}
   scope :daily_buyings, ->{daily_all.with_nature(:buying).sum(&:total_amount)}
-  scope :current_mp, ->{where('mode=? AND created_at BETWEEN ? AND ? ', Transaction.modes[:mp],Date.today.beginning_of_week, Date.today.next_week(:monday))}
-  scope :current_nmp, ->{where('mode=? AND created_at BETWEEN ? AND ?', Transaction.modes[:nmp],Date.today.beginning_of_week, Date.today.next_week(:monday))}
+  scope :current_mp, ->{where('mode=? AND transaction_date BETWEEN ? AND ? ', Transaction.modes[:mp],Date.today.beginning_of_week, Date.today.next_week(:monday))}
+  scope :current_nmp, ->{where('mode=? AND transaction_date BETWEEN ? AND ?', Transaction.modes[:nmp],Date.today.beginning_of_week, Date.today.next_week(:monday))}
   scope :only_parents, -> {where('father_id is NULL')}
+  scope :in_range_alarm, -> (from,to){where('target_date BETWEEN ? AND ?',from, to)}
+  scope :due, ->{where('total_amount!=recieved_amount')}
   
   def pending?
     (total_amount > recieved_amount)
@@ -73,6 +75,14 @@ class Transaction < ApplicationRecord
     child
   end
 
+
+  def self.report
+     buyings  = all.with_nature('buying') 
+     sellings = all.with_nature('selling') 
+     buyings_total = buyings.inject(0){|tot,a| tot+a.total_amount} 
+     sellings_total = sellings.inject(0){|tot,a| tot+a.total_amount}
+     {buyings: buyings_total, sellings: sellings_total}
+  end
 
   private
   def figure_out_target_date

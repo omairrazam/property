@@ -4,13 +4,34 @@
     <button class="btn btn-info pull-right" id='printBtn'>Take Print</button>
     <div class="clearfix"></div>
   </div>
-  <div class="panel-body">Panel Content</div>
+  <div class="panel-body" id='global_search_fields'>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>Date From</small><br>
+        <input type='date' name='global_from'data-childclass='search_from'/>
+      </div>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>Date To</small><br>
+        <input type='date' name='global_to' data-childclass='search_to'/>
+      </div>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>C/O</small><br>
+        <%= select_tag "global_c_o", options_from_collection_for_select(Person.all, "id", "username"), {:include_blank => 'choose', data:{childclass: 'search_c_o'}} %>
+      </div>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>Trader</small><br>
+        <%= select_tag "global_trader", options_from_collection_for_select(Person.all, "id", "username"), {:include_blank => 'choose', data:{childclass: 'search_trader'}} %>
+      </div>
+      <div class="col-md-2">
+        <br>
+        <button id='global_search_btn'>Search</button>
+      </div>
+  </div>
 </div>
 
 
 <div class="row" id='reports'>
 <% Transaction.modes.keys.each do |m| %>
-  <div class="col-md-6">
+  <div class="col-md-4">
     <%= render partial: 'report_segment', locals: {mode: m} %>
   </div>
 <% end %>
@@ -18,7 +39,46 @@
 
 
 <script type="text/javascript">
-  $('#printBtn').on('click',function(){
-    $('#reports').printThis();
-  })
+  jQuery(function($){
+    $('#printBtn').on('click',function(){
+      $('#reports').printThis();
+    });
+
+    $('.js-form-report :input').on('change',function(){
+      var formId = '#'+$(this).closest('form').attr('id');
+      var mode = $(formId).data('mode');
+      var from = $('input[name=start_'+mode+']').val();
+      var to = $('input[name=end_'+mode+']').val();
+      var co = $('input[name=c_o_'+mode+']').val();
+      var trader = $('input[name=trader'+mode+']').val();
+
+      if(from && from.length > 1){
+        if(!to || to.length<2){
+          return;
+        }
+      }
+
+      if(to && to.length > 1){
+        if(!from || from.length<2){
+          return;
+        }
+      }
+
+      Rails.fire($(formId)[0], 'submit');
+    });
+  });
+
+  $(function(){
+    $('#global_search_btn').on('click',function(){
+        var fields = $('#global_search_fields :input');
+        $.each(fields,function(i,v){
+          var childClass = '.'+$(this).data('childclass');
+          $(childClass).val($(v).val());
+        })
+
+        $.each($('.js-form-report'), function(i,v){
+          Rails.fire($(v)[0], 'submit');
+        });
+    });
+  });
 </script>

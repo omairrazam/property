@@ -15,7 +15,7 @@
 // require jquery_ujs
 // require turbolinks
 //= require_tree .
-
+jQuery.noConflict();
 var datatableAjaxError = function (xhr, textStatus, errorThrown) {
     var msg = JSON.parse(xhr.responseText);
     var key = Object.keys(msg)[0];

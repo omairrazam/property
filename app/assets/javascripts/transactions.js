@@ -1,4 +1,4 @@
-$(function(){
+jQuery(function($){
     // Add event listener for opening and closing details
     
     $('#datatable_transactions thead tr:eq(1) th').each( function () {
