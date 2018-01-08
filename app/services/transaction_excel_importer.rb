@@ -45,7 +45,7 @@ class TransactionExcelImporter
         :care_of => Person.where(:username => row["C/O"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["C/O"].downcase.strip.tr(" ", "_")),
         :trader => Person.where(:username => row["NAME"].downcase.strip.tr(" ", "_")).first_or_create(:username => row["NAME"].downcase.strip.tr(" ", "_")),
         :total_amount => row["RATE"],
-        #:recieved_amount => row["TOTAL"]/row["PCS"],
+        :aggregate_recieved => row["TOTAL"],
         :transaction_date => @date || row['DATE'],
         :category => @category[0],
         :region => @region[0],

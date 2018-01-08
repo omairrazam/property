@@ -56,13 +56,13 @@ namespace :sidekiq do
     invoke 'sidekiq:start'
   end
 
-  #before 'deploy:finished', 'sidekiq:restart'
+  before 'deploy:finished', 'sidekiq:restart'
 
   task :stop do
     on roles(:app) do
       within current_path do
         pid = p capture "ps aux | grep sidekiq | awk '{print $2}' | sed -n 1p"
-        execute("kill -9 #{pid}")
+        execute("kill -9 #{pid}") if pid.present?
       end
     end
   end
