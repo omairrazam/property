@@ -1,7 +1,7 @@
 <%= link_to "New Person", new_person_path, id: 'new_person_link', remote: true, class: "btn btn-primary hide" %>
-
+<br>
   <div class="row">
-    <div class="col-md-8 ">
+    <div class="col-md-3 ">
       <%= form_tag import_transactions_path, :multipart => true do %>
         <div class="form-group">
           <%= file_field_tag :excel_file,:class => "form-control" %>
@@ -11,28 +11,36 @@
         </div>
       <% end %>
     </div>
-    <div class="col-md-offset-1 col-md-2">
+    <div class=" col-md-4 pull-right">
   <div class="table-responsive">
-  <table class="table table-bordered" id="tab1" >
+  <table class="table table-bordered" id="files_summary" >
     <thead>
-      <tr class="well">
+      <tr class="">
         <th>Category</th>
+        <th>Buyings</th>
+        <th>Sellings</th>
         <th>Files Left</th>
       </tr>
     </thead>
     <tbody>
-      <tr>
-        <th> 1 Kanal</th>
-        <td><%= PlotFile.oneKanal('','') %></td>
-      </tr>
-      <tr>
-        <th> 10 Marla</th>
-        <td><%= PlotFile.tenMarla('','') %></td>
-      </tr>
-      <tr>
-        <th> 5 Marla</th>
-        <td><%= PlotFile.fiveMarla('','')%></td>
-      </tr>
+        <tr>
+          <td> 5 Marla</td>
+          <td><%= PlotFile.file_stats(5,'m','b')%></td>
+          <td><%= PlotFile.file_stats(5,'m','s')%></td>
+          <td><%= PlotFile.file_stats(5,'m')%></td>
+        </tr>
+        <tr>
+          <td> 10 Marla</td>
+          <td> <%= PlotFile.file_stats(10,'m','b')%></td>
+          <td> <%= PlotFile.file_stats(10,'m','s')%></td>
+          <td> <%= PlotFile.file_stats(10,'m') %></td>
+        </tr>
+        <tr>
+          <td> 1 Kanal</td>
+          <td> <%= PlotFile.file_stats(1,'k','b')%></td>
+          <td> <%= PlotFile.file_stats(1,'k','s')%></td>
+          <td> <%= PlotFile.file_stats(1,'k') %></td>
+        </tr>
     </tbody>
   </table>
 </div>
@@ -49,6 +57,11 @@
 
   .input-table-header{
     width: 20px ;
+  }
+
+  #files_summary tr{
+    font-size: 10px;
+    padding: 4px;
   }
 
   td{
@@ -124,6 +137,20 @@
             <th data-inputtype='text'>Comment</th>
           </tr>
       </thead>
+      <tfoot>
+            <tr>
+               <th colspan="6" style="text-align:right"></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+            </tr>
+        </tfoot>
+
   </table>
 </div>
 

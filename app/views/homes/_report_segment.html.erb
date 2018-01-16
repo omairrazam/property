@@ -24,7 +24,7 @@
 	  		<% end %>
 	</div>
 	<div class="panel-body" id='summary_<%=mode%>'>
-	  <%= render partial: 'summary', locals: {sellings:data[:sellings], buyings:data[:buyings]} %>
+	  <%= render partial: 'summary', locals: {sellings:data[:sellings], buyings:data[:buyings], b_count:data[:b_count], s_count:data[:s_count]} %>
 	</div>
 </div>
 

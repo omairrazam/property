@@ -62,7 +62,7 @@ namespace :sidekiq do
     on roles(:app) do
       within current_path do
         pid = p capture "ps aux | grep sidekiq | awk '{print $2}' | sed -n 1p"
-        execute("kill -9 #{pid}") if pid.present?
+        execute("kill -9 #{pid}") 
       end
     end
   end

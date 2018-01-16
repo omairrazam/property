@@ -1,6 +1,10 @@
+
+
+
 jQuery(function($){
     // Add event listener for opening and closing details
-    
+
+
     $('#datatable_transactions thead tr:eq(1) th').each( function () {
         var title = $('#datatable_transactions thead tr:eq(0) th').eq( $(this).index() ).text();
         var type = $(this).data('inputtype')
@@ -310,7 +314,60 @@ var table = $(divIdName).DataTable( {
               Rails.fire($('#new_person_link')[0], 'click');
             }
           }
-      ]
+      ],
+
+      "footerCallback": function ( row, data, start, end, display ) {
+            var api = this.api(), data;
+ 
+            // Remove the formatting to get integer data for summation
+            var intVal = function ( i ) {
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
+            };
+ 
+            // Total over all pages
+            total = api
+                .column( 6 )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Total over this page
+            totAmount = api
+                .column( 6, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+
+            recAmount = api
+                .column( 7, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+            remAmount = api
+                .column( 8, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
+ 
+            // Update footer
+            $( api.column( 6 ).footer() ).html(
+                'Rs:'+totAmount
+            );
+            $( api.column( 7 ).footer() ).html(
+                'Rs:'+recAmount 
+            );
+            $( api.column( 8 ).footer() ).html(
+                'Rs:'+remAmount
+            );
+        }
+
   });
 
    // Apply the search
@@ -332,6 +389,11 @@ var table = $(divIdName).DataTable( {
         table.ajax.reload();
     } )
 });
+
+
+
+
+
 
 // function child_data( d ) {
 //     // `d` is the original data object for the row

@@ -1,5 +1,6 @@
 class PlotFile < ApplicationRecord
 	has_paper_trail
+	
 	after_initialize :set_default_state
 	after_create :sync_state_with_region
 
@@ -24,38 +25,19 @@ class PlotFile < ApplicationRecord
 	    event :assign_file do
 	      transition :open => :assigned
 	    end
-
 	end
 
-	def self.oneKanal(category,unit)
-
-		one_canal_cat=Transaction.by_category('1','k')
-		 buy_one_canal=one_canal_cat.with_nature('buying').count
-     sell_one_canal=one_canal_cat.with_nature('selling').count
-		 files_left=buy_one_canal-sell_one_canal
-  return files_left
-end
-
-def self.tenMarla(cat,uni)
-	ten_marla_cat=Transaction.by_category('10','m')
-	 buy_ten_marla=ten_marla_cat.with_nature('buying').count
-	 sell_ten_marla=ten_marla_cat.with_nature('selling').count
-	 files_left=buy_ten_marla-sell_ten_marla
-	return files_left
-end
-def self.fiveMarla(cat,uni)
-	five_marla_cat=Transaction.by_category('5','m')
-	 buy_five_marla=five_marla_cat.with_nature('buying').count
-	 sell_five_marla=five_marla_cat.with_nature('selling').count
-	 files_left=buy_five_marla-sell_five_marla
-end
-
-
-
+	def self.file_stats(unit,category,returnn=nil)
+		one_canal_cat  = Transaction.by_category(unit,category)
+		buy_one_canal  = one_canal_cat.with_nature('buying').count 
+		return buy_one_canal if returnn == 'b'
+     	sell_one_canal = one_canal_cat.with_nature('selling').count
+		return sell_one_canal if returnn == 's'
+		buy_one_canal-sell_one_canal
+	end
 
 	private
 	def set_default_state
 		self.state = :pending
 	end
-
 end

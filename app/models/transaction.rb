@@ -81,7 +81,7 @@ class Transaction < ApplicationRecord
      sellings = all.with_nature('selling')
      buyings_total = buyings.inject(0){|tot,a| tot+a.total_amount}
      sellings_total = sellings.inject(0){|tot,a| tot+a.total_amount}
-     {buyings: buyings_total, sellings: sellings_total}
+     {buyings: buyings_total,b_count:buyings.count,s_count:selling.count, sellings: sellings_total}
   end
 
   private
@@ -101,11 +101,11 @@ class Transaction < ApplicationRecord
       self.transaction_date.next_week(:friday)
   	when :bop,:sop
       raise ArgumentError.new("mode is (sop,bop) but target_date_in_days is missing, can't calculate target_date of transaction") if target_date_in_days.blank?
-      target_date_in_days.days.from_now
+      self.transaction_date+self.target_date_in_days.day
   	when :pod
       pod_days = category.pod_days
       raise ArgumentError.new("mode is pod but Category's pod amount is missing, can't calculate target_date of transaction") if pod_days.blank? || pod_days == 0
-      pod_days.days.from_now
+      self.transaction_date+pod_days.day
     when :custom
   	   #ignore for now.
   	else
