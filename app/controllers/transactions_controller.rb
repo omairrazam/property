@@ -55,6 +55,7 @@ class TransactionsController < ApplicationController
     if params[:excel_file].present?
       uploader = ExcelImportUploader.new
       uploader.store!(params[:excel_file])
+      #processor = TransactionExcelImporter.new(uploader.file)
       processor = TransactionExcelImporter.delay(:retry => false).new(uploader.file)
       redirect_to transactions_url, notice: 'Transactions are being imported. You will be informed about the progress via email.'
     else

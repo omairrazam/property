@@ -8,6 +8,7 @@ class TransactionExcelImporter
 
 	def process
     @spreadsheet.sheets.each do |worksheet|
+      @worksheet
       #next if worksheet == 'All-City_Buying-10-M'
       begin
         ActiveRecord::Base.transaction do
@@ -95,6 +96,8 @@ class TransactionExcelImporter
   
 	def get_target_no_of_days row
     r = row
+    raise ArgumentError.new("Date or Due Date is not found at #{@i} row, the data was #{row.as_json} in worksheet #{@worksheet}") if row["DUE DATE"].blank?
+
     row['DATE'] = row["DATE"].strftime('%d/%m/%y') if row['DATE'].class == Date
     row['DUE DATE'] = row["DUE DATE"].strftime('%d/%m/%y') if row['DUE DATE'].class == Date
     due_date = row["DUE DATE"].strip.split("/")
