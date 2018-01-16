@@ -386,7 +386,8 @@ var table = $(divIdName).DataTable( {
 
     editor
     .on( 'postSubmit', function ( e, json, data, action ) {
-        table.ajax.reload();
+        //table.ajax.reload();
+        location.reload();
     } )
 });
 
