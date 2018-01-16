@@ -24,13 +24,13 @@ class Transaction < ApplicationRecord
   #validates_presence_of :excel_file, if: Proc.new { |f| %i(file).include?(f.imported_from.try(:to_sym)) }
   validates_presence_of :total_amount, :recieved_amount,:nature,:category,:region, :duplicate_count, :transaction_date
   validates :total_amount, numericality: { greater_than: 0 }
-  validates :duplicate_count, numericality: { greater_than: 0 } 
+  validates :duplicate_count, numericality: { greater_than: 0 }
   validates :recieved_amount, numericality: { greater_than_or_equal_to: 0 }
   validates :nature, inclusion: { in: Transaction.natures.keys }
   validates :mode, inclusion: { in: Transaction.modes.keys }
 
   before_validation :amount_calculation
-
+  scope :by_category, ->(val,unit){where('category_id=?', Category.by_category(val,unit).last.id)}
   scope :daily_all, ->{where('DATE(transaction_date)=?',Time.zone.now.beginning_of_day)}
   scope :with_mode, ->(mode){where(mode: mode)}
   scope :with_nature, ->(nature){where(nature: nature)}
@@ -41,7 +41,7 @@ class Transaction < ApplicationRecord
   scope :only_parents, -> {where('father_id is NULL')}
   scope :in_range_alarm, -> (from,to){where('target_date BETWEEN ? AND ?',from, to)}
   scope :due, ->{where('total_amount!=recieved_amount')}
-  
+
   def pending?
     (total_amount > recieved_amount)
   end
@@ -51,7 +51,7 @@ class Transaction < ApplicationRecord
   end
 
   def remaining_amount
-    total_amount - recieved_amount 
+    total_amount - recieved_amount
   end
 
   def self.create_in_bulk params
@@ -60,7 +60,7 @@ class Transaction < ApplicationRecord
       parent = Transaction.create!(params)
       new_ones << parent
       raise ArgumentError.new("Duplicate Count missing, cannot create child") if parent.duplicate_count.blank?
-      (2..parent.duplicate_count).each do 
+      (2..parent.duplicate_count).each do
         child = parent.create_child
         new_ones << child
       end
@@ -77,9 +77,9 @@ class Transaction < ApplicationRecord
 
 
   def self.report
-     buyings  = all.with_nature('buying') 
-     sellings = all.with_nature('selling') 
-     buyings_total = buyings.inject(0){|tot,a| tot+a.total_amount} 
+     buyings  = all.with_nature('buying')
+     sellings = all.with_nature('selling')
+     buyings_total = buyings.inject(0){|tot,a| tot+a.total_amount}
      sellings_total = sellings.inject(0){|tot,a| tot+a.total_amount}
      {buyings: buyings_total, sellings: sellings_total}
   end
@@ -140,7 +140,7 @@ class Transaction < ApplicationRecord
   end
 
   def amount_calculation
-    if total_amount.to_i * duplicate_count < recieved_amount.to_i 
+    if total_amount.to_i * duplicate_count < recieved_amount.to_i
       errors.add(:base, "Recieved amount cannot be greater than agreed amount i.e pieces * per_piece_amount")
     end
   end
