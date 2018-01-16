@@ -1,20 +1,52 @@
 <%= link_to "New Person", new_person_path, id: 'new_person_link', remote: true, class: "btn btn-primary hide" %>
 
-<br>
-<div class="row">
-  <div class="col-md-3">
-    <%= form_tag import_transactions_path, :multipart => true do %>
-      <div class="form-group">
-        <%= file_field_tag :excel_file,:class => "form-control" %>
-      </div>
-      <div class="form-group">
-        <%= submit_tag "Import", :class => "btn btn-primary" %>
-      </div>
-    <% end %>
-  </div>
+  <div class="row">
+    <div class="col-md-8 ">
+      <%= form_tag import_transactions_path, :multipart => true do %>
+        <div class="form-group">
+          <%= file_field_tag :excel_file,:class => "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= submit_tag "Import", :class => "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <div class="col-md-offset-1 col-md-2">
+  <div class="table-responsive">
+  <table class="table table-bordered" id="tab1" >
+    <thead>
+      <tr class="well">
+        <th>Category</th>
+        <th>Files Left</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th> 1 Kanal</th>
+        <td><%= PlotFile.oneKanal('','') %></td>
+      </tr>
+      <tr>
+        <th> 10 Marla</th>
+        <td><%= PlotFile.tenMarla('','') %></td>
+      </tr>
+      <tr>
+        <th> 5 Marla</th>
+        <td><%= PlotFile.fiveMarla('','')%></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</div>
 </div>
 
+
+<br>
+
+
+
+
 <style type="text/css">
+
   .input-table-header{
     width: 20px ;
   }
@@ -58,7 +90,7 @@
   <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
       <col width="30">
       <thead>
-          
+
           <tr>
             <th>Pieces</th>
             <th>Category</th>
@@ -100,38 +132,37 @@
     display: flex;
     flex-flow: row wrap;
 }
- 
+
 #customForm fieldset {
     flex: 1;
     border: 1px solid #aaa;
     margin: 0.5em;
 }
- 
+
 #customForm fieldset legend {
     padding: 5px 20px;
     border: 1px solid #aaa;
     font-weight: bold;
 }
- 
+
 #customForm fieldset.name {
     flex: 2 100%;
 }
- 
+
 #customForm fieldset.name legend {
     background: #bfffbf;
 }
- 
+
 #customForm fieldset.office legend {
     background: #ffffbf;
 }
- 
+
 #customForm fieldset.hr legend {
     background: #ffbfbf;
 }
- 
+
 #customForm div.DTE_Field {
     padding: 5px;
 }
-  
-</style>
 
+</style>

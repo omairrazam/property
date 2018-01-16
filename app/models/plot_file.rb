@@ -5,7 +5,7 @@ class PlotFile < ApplicationRecord
 
 	has_many :transactions
 	has_many :installments
-	
+
 	belongs_to :category
 	belongs_to :region, optional: true
 
@@ -27,14 +27,35 @@ class PlotFile < ApplicationRecord
 
 	end
 
+	def self.oneKanal(category,unit)
+
+		one_canal_cat=Transaction.by_category('1','k')
+		 buy_one_canal=one_canal_cat.with_nature('buying').count
+     sell_one_canal=one_canal_cat.with_nature('selling').count
+		 files_left=buy_one_canal-sell_one_canal
+  return files_left
+end
+
+def self.tenMarla(cat,uni)
+	ten_marla_cat=Transaction.by_category('10','m')
+	 buy_ten_marla=ten_marla_cat.with_nature('buying').count
+	 sell_ten_marla=ten_marla_cat.with_nature('selling').count
+	 files_left=buy_ten_marla-sell_ten_marla
+	return files_left
+end
+def self.fiveMarla(cat,uni)
+	five_marla_cat=Transaction.by_category('5','m')
+	 buy_five_marla=five_marla_cat.with_nature('buying').count
+	 sell_five_marla=five_marla_cat.with_nature('selling').count
+	 files_left=buy_five_marla-sell_five_marla
+end
+
+
+
+
 	private
 	def set_default_state
 		self.state = :pending
 	end
 
 end
-
-
-
-
-
