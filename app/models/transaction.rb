@@ -51,9 +51,11 @@ class Transaction < ApplicationRecord
   end
 
   def remaining_amount
-    total_amount - recieved_amount
+    dealer_total_amount - aggregate_recieved
   end
-
+ def dealer_total_amount
+    total_amount*duplicate_count
+ end
   def self.create_in_bulk params
     ActiveRecord::Base.transaction do
       new_ones = []

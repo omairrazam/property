@@ -14,8 +14,8 @@ jQuery(function($){
               format: 'dd/mm/yyyy',
           });
         }
-    } ); 
-  
+    } );
+
     $('body').on('focus','.input-table-header',function(){
       $(this).css('width','95px');
     });
@@ -32,8 +32,8 @@ jQuery(function($){
     var entity = 'transactions';
     var controller_key = 'transaction';
     var divIdName = '#datatable_transactions';
-    
-    
+
+
 
     editor = new $.fn.dataTable.Editor({
         template: '#customForm',
@@ -60,7 +60,7 @@ jQuery(function($){
                 url:  '/'+entity+'/_id_.json',
                 'data': function ( d ) {
                     var id;
-                   
+
                     for (var i in d.data) {
                         id = i;
                     }
@@ -92,12 +92,12 @@ jQuery(function($){
             label: "Category:",
             name: "category_id",
             type: 'select'
-        }, 
+        },
         {
             label: "Region:",
             name: "region_id",
             type: 'select'
-        }, 
+        },
         {
             label: "Pieces:",
             name: "duplicate_count",
@@ -112,6 +112,7 @@ jQuery(function($){
                 type: "number"
             }
         },
+
         {
             label: "Total Received Amount",
             name: "aggregate_recieved",
@@ -144,7 +145,7 @@ jQuery(function($){
             name: "mode",
             type: "select"
         },
-        
+
         {
             label: "Comment:",
             name: "comment",
@@ -156,14 +157,14 @@ jQuery(function($){
                 type: "number"
             }
         }
-        
+
         ]
 
     } );
 
 $( editor.field( 'mode' ).node() ).on('change', function () {
     var mode = editor.field( 'mode' ).val();
-    
+
     if(mode == 'bop' || mode == 'sop'){
         editor.field('target_date_in_days').show();
     }else{
@@ -204,32 +205,29 @@ var table = $(divIdName).DataTable( {
            render:function (value) {
             var nt = value;
             return  nt[0].toUpperCase() + nt.slice(1);
-           } 
+           }
         },
         { "data": "region.title",
            render:function (value) {
             var nt = value;
             return  nt[0].toUpperCase() + nt.slice(1);
-           } 
+           }
         },
         { "data": "care_of.username",
            render:function (value) {
             var nt = value;
             return  nt[0].toUpperCase() + nt.slice(1);
-           } 
+           }
         },
         { "data": "trader.username",
            render:function (value) {
             var nt = value;
             return  nt[0].toUpperCase() + nt.slice(1);
-           } 
+           }
         },
         { "data": "total_amount"},
-        { "data": "total_amount",
-          render: function(data,type,row){
-            return  (row.total_amount * row.duplicate_count);
-          }
-        },
+        { "data": "dealer_total_amount"},
+
         { "data": "aggregate_recieved"
         },
         { "data": "remaining_amount" ,
@@ -241,20 +239,20 @@ var table = $(divIdName).DataTable( {
            render:function (value) {
             var nt = value;
             return  nt[0].toUpperCase() + nt.slice(1);
-           } 
+           }
         },
         { "data": "mode",
            render:function (value) {
             var nt = value;
             return  nt[0].toUpperCase() + nt.slice(1);
-           }  
+           }
         },
         { "data": "transaction_date",
            "type": 'date',
            render:function (value) {
             var dt = new Date(value);
             return dt.toLocaleDateString();
-          } 
+          }
         },
         { "data": "target_date",
            "type": 'datetime',
@@ -264,11 +262,11 @@ var table = $(divIdName).DataTable( {
             }
             var dt = new Date(value);
             return dt.toLocaleDateString();
-          } 
+          }
         },
         { "data": "comment" },
 
-        
+
     ],
       lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
       select:true,
@@ -318,7 +316,7 @@ var table = $(divIdName).DataTable( {
 
       "footerCallback": function ( row, data, start, end, display ) {
             var api = this.api(), data;
- 
+
             // Remove the formatting to get integer data for summation
             var intVal = function ( i ) {
                 return typeof i === 'string' ?
@@ -326,7 +324,8 @@ var table = $(divIdName).DataTable( {
                     typeof i === 'number' ?
                         i : 0;
             };
- 
+
+
             // Total over all pages
             total = api
                 .column( 6 )
@@ -334,8 +333,14 @@ var table = $(divIdName).DataTable( {
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0 );
- 
+
             // Total over this page
+            totPiece = api
+                .column( 0, { page: 'current'} )
+                .data()
+                .reduce( function (a, b) {
+                    return intVal(a) + intVal(b);
+                }, 0 );
             totAmount = api
                 .column( 6, { page: 'current'} )
                 .data()
@@ -355,13 +360,16 @@ var table = $(divIdName).DataTable( {
                 .reduce( function (a, b) {
                     return intVal(a) + intVal(b);
                 }, 0 );
- 
+
             // Update footer
+            $( api.column( 0 ).footer() ).html(
+                ''+totPiece
+            );
             $( api.column( 6 ).footer() ).html(
                 'Rs:'+totAmount
             );
             $( api.column( 7 ).footer() ).html(
-                'Rs:'+recAmount 
+                'Rs:'+recAmount
             );
             $( api.column( 8 ).footer() ).html(
                 'Rs:'+remAmount
@@ -424,4 +432,3 @@ var table = $(divIdName).DataTable( {
 
 //   return tableStr + '</table>';
 // }
-
