@@ -175,13 +175,18 @@ $( editor.field( 'mode' ).node() ).on('change', function () {
 
 
 var table = $(divIdName).DataTable( {
+
       dom: "Bfrtip",
+      "processing": true,
+      "serverSide": true,
       ajax: {
           'url': "/"+entity+".json"
       },
+
       "orderClasses": false,
       orderCellsTop: true,
       responsive: true,
+
       "createdRow": function ( row, data, index ) {
         if(data["paid"]){
           $('td',row).eq(7).addClass('green');
@@ -231,6 +236,7 @@ var table = $(divIdName).DataTable( {
         { "data": "aggregate_recieved"
         },
         { "data": "remaining_amount" ,
+
           render: function(data,type,row){
             return  (row.total_amount * row.duplicate_count) - row.aggregate_recieved;
           }

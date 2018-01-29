@@ -12,6 +12,7 @@
 //
 //= require rails-ujs
 //= require jquery
+//= require jquery-ui
 // require jquery_ujs
 //= require bootstrap-datepicker
 // require turbolinks
@@ -27,7 +28,7 @@ var datatableAjaxError = function (xhr, textStatus, errorThrown) {
 
 
 $(document).ajaxError(function(event,xhr,options,exc) {
-    
+
     var errors = JSON.parse(xhr.responseText);
     var er ="<ul>";
     for(var i = 0; i < errors.length; i++){
@@ -36,5 +37,5 @@ $(document).ajaxError(function(event,xhr,options,exc) {
     }
     er+="</ul>"
     $("#error_explanation").html(er);
-       
+
 });

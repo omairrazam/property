@@ -14,6 +14,7 @@ class Transaction < ApplicationRecord
   belongs_to :category
   belongs_to :region
 
+
   has_many :children, :class_name => 'Transaction', :foreign_key => 'father_id', dependent: :destroy
 
   enum nature: %i(buying selling)
