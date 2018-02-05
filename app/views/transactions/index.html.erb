@@ -1,16 +1,16 @@
 <%= link_to "New Person", new_person_path, id: 'new_person_link', remote: true, class: "btn btn-primary hide" %>
 <br>
   <div class="row">
-    <div class="col-md-3 ">
-      <%= form_tag import_transactions_path, :multipart => true do %>
+    <!-- <div class="col-md-3 ">
+      <%#= form_tag import_transactions_path, :multipart => true do %>
         <div class="form-group">
-          <%= file_field_tag :excel_file,:class => "form-control" %>
+          <%#= file_field_tag :excel_file,:class => "form-control" %>
         </div>
         <div class="form-group">
-          <%= submit_tag "Import", :class => "btn btn-primary" %>
+          <%#= submit_tag "Import", :class => "btn btn-primary" %>
         </div>
-      <% end %>
-    </div>
+      <%# end %>
+    </div> -->
     <div class=" col-md-4 pull-right">
   <div class="table-responsive">
   <table class="table table-bordered" id="files_summary" >
