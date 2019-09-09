@@ -16,17 +16,25 @@
  *= require_self
  */
 
+ tfoot tr, thead tr {
+ 	background: lightblue;
+ }
+ tfoot td {
+ 	font-weight:bold;
+ }
 li.tab{
 	cursor: pointer;
 }
 .dataTables_wrapper{
 	padding-top:20px;
+	padding-right: 10px;
 }
 table.dataTable{
+
 	font-size:10px;
 }
 .navbar-static-top {
-    z-index: 1; 
+    z-index: 1;
     border-width: 0 0 1px;
 }
 
@@ -45,16 +53,15 @@ tr.shown td.details-control {
 
 .green{
 	background-color:springgreen;
-	color:white;
+	color:black;
 }
 
 .red{
 	background-color:red;
-	color:white;
+	color:black;
 }
 
 .pink{
 	background-color:pink;
 	color:white;
 }
-

@@ -58,7 +58,9 @@
   .input-table-header{
     width: 20px ;
   }
-
+  #files_summary {
+    background-color: #91ffd6;
+}
   #files_summary tr{
     font-size: 10px;
     padding: 4px;
@@ -100,7 +102,7 @@
   </fieldset>
 </div>
 <div class="datatable">
-  <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
+  <table id="datatable_transactions" class="display " cellspacing="0" width="100%">
       <col width="30">
       <thead>
 
@@ -110,14 +112,14 @@
             <th>Region</th>
             <th>C/O</th>
             <th>Trader</th>
-            <th>Per Piece (Rs)</th>
-            <th>Total Amount (Rs)</th>
-            <th>Received Amount (Rs)</th>
-            <th>Remaining Amount (Rs)</th>
+            <th data-orderable="false">Per Piece (Rs)</th>
+            <th data-orderable="false">Total Amount (Rs)</th>
+            <th data-orderable="false">Received Amount (Rs)</th>
+            <th data-orderable="false">Remaining Amount (Rs)</th>
             <th>Nature</th>
             <th>Mode</th>
-            <th>Transaction Date </th>
-            <th>Alarm Date </th>
+            <th >Transaction Date  </th>
+            <th data-orderable="false">Alarm Date </th>
             <th>Comment</th>
           </tr>
           <tr>
@@ -139,7 +141,12 @@
       </thead>
       <tfoot>
             <tr>
-               <th colspan="6" style="text-align:right"></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
                <th></th>
                <th></th>
                <th></th>

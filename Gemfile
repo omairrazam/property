@@ -74,4 +74,3 @@ gem 'stateful_enum'
 gem "font-awesome-rails"
 gem 'paper_trail'
 gem 'bootstrap-datepicker-rails'
-
