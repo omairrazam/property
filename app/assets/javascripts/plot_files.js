@@ -1,7 +1,7 @@
 var entity = 'plot_files';
 var controller_key = 'plot_file';
 
-$(function(){
+jQuery(function($){
     var editor; // use a global for the submit and return data rendering in the examples
 
     editor = new $.fn.dataTable.Editor( {

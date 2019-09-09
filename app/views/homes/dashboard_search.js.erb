@@ -1,0 +1,2 @@
+var divId = "#summary_"+"<%=@mode%>";
+$(divId).html("<%= j render partial:'summary', locals:{buyings:@data[:buyings], sellings:@data[:sellings]} %>");

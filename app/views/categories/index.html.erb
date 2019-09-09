@@ -17,7 +17,7 @@
 <script type="text/javascript">
 	
 
-$(function(){
+jQuery(function($){
     var editor; // use a global for the submit and return data rendering in the examples
 
     var entity = 'categories';
@@ -105,7 +105,10 @@ $(function(){
         ],
         select: true,
         buttons: [
-            
+            {
+              extend: "edit",
+              editor: editor
+            }
         ]
     } );
 });

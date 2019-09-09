@@ -1,13 +1,79 @@
+<%= link_to "New Person", new_person_path, id: 'new_person_link', remote: true, class: "btn btn-primary hide" %>
+<br>
+  <div class="row">
+    <div class="col-md-3 ">
+      <%= form_tag import_transactions_path, :multipart => true do %>
+        <div class="form-group">
+          <%= file_field_tag :excel_file,:class => "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= submit_tag "Import", :class => "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+    <div class=" col-md-4 pull-right">
+  <div class="table-responsive">
+  <table class="table table-bordered" id="files_summary" >
+    <thead>
+      <tr class="">
+        <th>Category</th>
+        <th>Buyings</th>
+        <th>Sellings</th>
+        <th>Files Left</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+          <td> 5 Marla</td>
+          <td><%= PlotFile.file_stats(5,'m','b')%></td>
+          <td><%= PlotFile.file_stats(5,'m','s')%></td>
+          <td><%= PlotFile.file_stats(5,'m')%></td>
+        </tr>
+        <tr>
+          <td> 10 Marla</td>
+          <td> <%= PlotFile.file_stats(10,'m','b')%></td>
+          <td> <%= PlotFile.file_stats(10,'m','s')%></td>
+          <td> <%= PlotFile.file_stats(10,'m') %></td>
+        </tr>
+        <tr>
+          <td> 1 Kanal</td>
+          <td> <%= PlotFile.file_stats(1,'k','b')%></td>
+          <td> <%= PlotFile.file_stats(1,'k','s')%></td>
+          <td> <%= PlotFile.file_stats(1,'k') %></td>
+        </tr>
+    </tbody>
+  </table>
+</div>
+</div>
+</div>
+
+
+<br>
+
+
+
+
+<style type="text/css">
+
+  .input-table-header{
+    width: 20px ;
+  }
+  #files_summary {
+    background-color: #91ffd6;
+}
+  #files_summary tr{
+    font-size: 10px;
+    padding: 4px;
+  }
+
+  td{
+    width: 20px !important;
+  }
+</style>
+
 <p id="notice"><%= notice %></p>
 
-<%= form_tag import_transactions_path, :multipart => true do %>
-  <div class="form-group">
-    <%= file_field_tag :excel_file,:class => "form-control" %>
-  </div>
-  <div class="form-group">
-    <%= submit_tag "Import", :class => "btn btn-primary" %>
-  </div>
-<% end %>
+
 
 <div id="customForm">
   <fieldset class="name">
@@ -16,39 +82,82 @@
       <editor-field name="region_id"></editor-field>
       <editor-field name="nature"></editor-field>
       <editor-field name="mode"></editor-field>
+      <editor-field name="target_date_in_days"></editor-field>
+      <editor-field name="transaction_date"></editor-field>
   </fieldset>
   <fieldset class="office">
       <legend>Amounts</legend>
       <editor-field name="duplicate_count"></editor-field>
       <editor-field name="total_amount"></editor-field>
-      <editor-field name="recieved_amount"></editor-field>
+      <editor-field name="aggregate_recieved"></editor-field>
   </fieldset>
   <fieldset class="hr">
       <legend>Traders</legend>
-      <editor-field name="target_date_in_days"></editor-field>
       <editor-field name="trader_id"></editor-field>
       <editor-field name="care_of_id"></editor-field>
   </fieldset>
+  <fieldset class="name">
+      <legend>Others</legend>
+      <editor-field name="comment"></editor-field>
+  </fieldset>
 </div>
 <div class="datatable">
-  <table id="datatable_transactions" class="display" cellspacing="0" width="100%">
+  <table id="datatable_transactions" class="display " cellspacing="0" width="100%">
+      <col width="30">
       <thead>
+
           <tr>
             <th>Pieces</th>
             <th>Category</th>
             <th>Region</th>
             <th>C/O</th>
             <th>Trader</th>
-            <th>Per Piece (Rs)</th>
-            <th>Total Amount (Rs)</th>
-            <th>Received Amount (Rs)</th>
-            <th>Remaining Amount (Rs)</th>
+            <th data-orderable="false">Per Piece (Rs)</th>
+            <th data-orderable="false">Total Amount (Rs)</th>
+            <th data-orderable="false">Received Amount (Rs)</th>
+            <th data-orderable="false">Remaining Amount (Rs)</th>
             <th>Nature</th>
             <th>Mode</th>
-            <th>Transaction Date </th>
-            <th>Alarm Date </th>
+            <th >Transaction Date  </th>
+            <th data-orderable="false">Alarm Date </th>
+            <th>Comment</th>
+          </tr>
+          <tr>
+            <th data-inputtype='number'>Pieces</th>
+            <th data-inputtype='text'>Category</th>
+            <th data-inputtype='text'>Region</th>
+            <th data-inputtype='text'>C/O</th>
+            <th data-inputtype='text'>Trader</th>
+            <th data-inputtype='text'>Per Piece (Rs)</th>
+            <th data-inputtype='text'>Total Amount (Rs)</th>
+            <th data-inputtype='text'>Received Amount (Rs)</th>
+            <th data-inputtype='text'>Remaining Amount (Rs)</th>
+            <th data-inputtype='text'>Nature</th>
+            <th data-inputtype='text'>Mode</th>
+            <th data-inputtype='date'>Transaction Date </th>
+            <th data-inputtype='date'>Alarm Date </th>
+            <th data-inputtype='text'>Comment</th>
           </tr>
       </thead>
+      <tfoot>
+            <tr>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+               <th></th>
+            </tr>
+        </tfoot>
+
   </table>
 </div>
 
@@ -57,37 +166,37 @@
     display: flex;
     flex-flow: row wrap;
 }
- 
+
 #customForm fieldset {
     flex: 1;
     border: 1px solid #aaa;
     margin: 0.5em;
 }
- 
+
 #customForm fieldset legend {
     padding: 5px 20px;
     border: 1px solid #aaa;
     font-weight: bold;
 }
- 
+
 #customForm fieldset.name {
     flex: 2 100%;
 }
- 
+
 #customForm fieldset.name legend {
     background: #bfffbf;
 }
- 
+
 #customForm fieldset.office legend {
     background: #ffffbf;
 }
- 
+
 #customForm fieldset.hr legend {
     background: #ffbfbf;
 }
- 
+
 #customForm div.DTE_Field {
     padding: 5px;
 }
-  
+
 </style>

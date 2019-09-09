@@ -1,5 +1,5 @@
 
-$(function(){
+jQuery(function($){
     var editor; // use a global for the submit and return data rendering in the examples
     var entity = 'installments';
     var controller_key = 'installment';

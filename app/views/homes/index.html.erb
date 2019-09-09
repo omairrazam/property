@@ -1,290 +1,93 @@
-<!-- <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script> -->
-<!-- <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script> -->
-<script src="https://code.highcharts.com/stock/highstock.js"></script>
-<script src="https://code.highcharts.com/stock/modules/exporting.js"></script>
 
-<!-- <div class="row">
-  <div class="col-lg-12">
-    <h1 class="page-header">Dashboard</h1>
+
+<br>
+<blockquote class="blockquote text-center">
+  <p class="mb-0">Get Stats as per your filter</p>
+  <footer class="blockquote-footer">Results will be sum of uncleared transactions amounts with alarm date in your range</footer>
+  <footer class="blockquote-footer">This page shows what you have to take or what you have to pay for each category in given date range</footer>
+
+</blockquote>
+
+<div class="panel panel-info">
+  <div class="panel-heading">Global Filters 
+    <button class="btn btn-info pull-right" id='printBtn'>Take Print</button>
+    <div class="clearfix"></div>
   </div>
-</div> -->
-
-
-<div class="row">
-  <div class="col-lg-12 col-md-6" >
-    <!-- <div class="well">
-        <p>Total Sellings today: Rs: <%#= tot_sell = Transaction.daily_sellings %></p>
-        <p>Total Buyings today: Rs: <%#= tot_buy = Transaction.daily_buyings %></p>
-        <p >Net:  <span class="badge">Rs:<%#= net = (tot_sell - tot_buy) %> </span></p>
-    </div> -->
-    <%= form_tag homes_index_path, :id =>'transaction_search_form', :method => 'get' do %>
-        <%= select_tag(:mode, options_for_select([["MP", 'mp'],["NMP",'nmp']], params[:mode]),class:"js_t_search select") %>
-        <%#= select_tag(:nature, options_for_select([["Buying",'buying'],["Selling", 'selling']], params[:nature]),class:"js_t_search select") %>
-        <%#= submit_tag "Search"%>
-    <% end %></br>
-
-
-
-    <br>
-
-    <div class="tab-content">
-      <%= render 'global_search' %>
-
-      <div id="buying_tab" class="tab-pane fade in active" role="tabpanel">
-        <table id="b_table" class="table table-striped table-bordered dataTable" cellspacing="0" width="100%">
-          <thead>
-              <tr>
-                <th>Pieces</th>
-                <th>Category</th>
-                <th>Region</th>
-                <th>C/O</th>
-                <th>Trader</th>
-                <th>Total Amount (Rs)</th>
-                <th>Received Amount (Rs)</th>
-                <th>Remaining Amount (Rs)</th>
-                <th>Nature</th>
-                <th>Mode</th>
-                <th>Transaction Date </th>
-                <th>Alarm Date </th>
-             </tr>
-          </thead>
-
-        </table>
+  <div class="panel-body" id='global_search_fields'>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>Date From</small><br>
+        <input type='date' name='global_from'data-childclass='search_from'/>
       </div>
-      <div id="selling_tab" class="tab-pane fade in" role="tabpanel">
-        <table id="s_table" class="table table-striped table-bordered" cellspacing="0" width="100%">
-          <thead>
-            <tr>
-              <th>Pieces</th>
-              <th>Category</th>
-              <th>Region</th>
-              <th>C/O</th>
-              <th>Trader</th>
-              <th>Total Amount (Rs)</th>
-              <th>Received Amount (Rs)</th>
-              <th>Remaining Amount (Rs)</th>
-              <th>Nature</th>
-              <th>Mode</th>
-              <th>Transaction Date </th>
-              <th>Alarm Date </th>
-             </tr>
-          </thead>
-        </table>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>Date To</small><br>
+        <input type='date' name='global_to' data-childclass='search_to'/>
       </div>
-    </div>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>C/O</small><br>
+        <%= select_tag "global_c_o", options_from_collection_for_select(Person.all, "id", "username"), {:include_blank => 'choose', data:{childclass: 'search_c_o'}} %>
+      </div>
+      <div class="col-md-2">
+        <small class='text-muted text-sm pull-left'>Trader</small><br>
+        <%= select_tag "global_trader", options_from_collection_for_select(Person.all, "id", "username"), {:include_blank => 'choose', data:{childclass: 'search_trader'}} %>
+      </div>
+      <div class="col-md-2">
+        <br>
+        <button id='global_search_btn'>Search</button>
+      </div>
   </div>
 </div>
-<hr>
-<!-- /.row -->
+
+
+<div class="row" id='reports'>
+<% Transaction.modes.keys.each do |m| %>
+  <div class="col-md-4">
+    <%= render partial: 'report_segment', locals: {mode: m} %>
+  </div>
+<% end %>
+</div>
 
 
 <script type="text/javascript">
-function createChart() {
-
-    Highcharts.stockChart('container', {
-
-        rangeSelector: {
-            selected: 4
-        },
-
-        yAxis: {
-            labels: {
-                formatter: function () {
-                    return (this.value > 0 ? ' + ' : '') + this.value + '%';
-                }
-            },
-            plotLines: [{
-                value: 0,
-                width: 2,
-                color: 'silver'
-            }]
-        },
-
-        plotOptions: {
-            series: {
-                compare: 'percent',
-                showInNavigator: true
-            }
-        },
-
-        tooltip: {
-            pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b> ({point.change}%)<br/>',
-            valueDecimals: 2,
-            split: true
-        },
-
-        series: d
+  jQuery(function($){
+    $('#printBtn').on('click',function(){
+      $('#reports').printThis();
     });
-}
 
-$(function(){
-  d = [{name: names[0][0],data: <%= Transaction.order('created_at ASC').with_mode(:cash).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-       {name: names[1][0],data: <%= Transaction.order('created_at ASC').with_mode(:mp).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-       {name: names[2][0],data: <%= Transaction.order('created_at ASC').with_mode(:nmp).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-       {name: names[3][0],data: <%= Transaction.order('created_at ASC').with_mode(:sop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-       {name: names[4][0],data: <%= Transaction.order('created_at ASC').with_mode(:bop).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-       {name: names[5][0],data: <%= Transaction.order('created_at ASC').with_mode(:pod).pluck(:created_at, :total_amount).map{|c,a|[c.to_date.to_time.to_i*1000,a]} %>},
-  ];
-  //createChart();
-});
+    $('.js-form-report :input').on('change',function(){
+      var formId = '#'+$(this).closest('form').attr('id');
+      var mode = $(formId).data('mode');
+      var from = $('input[name=start_'+mode+']').val();
+      var to = $('input[name=end_'+mode+']').val();
+      var co = $('input[name=c_o_'+mode+']').val();
+      var trader = $('input[name=trader'+mode+']').val();
 
+      if(from && from.length > 1){
+        if(!to || to.length<2){
+          return;
+        }
+      }
 
-// Table Tabs //
+      if(to && to.length > 1){
+        if(!from || from.length<2){
+          return;
+        }
+      }
 
-$(document).ready(function() {
+      Rails.fire($(formId)[0], 'submit');
+    });
+  });
 
-    $('a[data-toggle="tab"]').on( 'shown.bs.tab', function (e) {
-        $.fn.dataTable.tables( {visible: true, api: true} ).columns.adjust();
-    } );
+  $(function(){
+    $('#global_search_btn').on('click',function(){
+        var fields = $('#global_search_fields :input');
+        $.each(fields,function(i,v){
+          var childClass = '.'+$(this).data('childclass');
+          $(childClass).val($(v).val());
+        })
 
-    $("#b_table").append('<tfoot class="tfoot"><th></th></tfoot>');
-    $('#b_table').DataTable({
-        "sPaginationType": "full_numbers",
-        "dom": '<"toolbar">frtip',
-        "ajax": "/homes/index.json?mode="+$('#mode').val()+"&tab="+"buying",
-
-        "drawCallback": function( settings ) {
-          if(settings.aoData[0]){
-            //console.log(settings.aoData[0]._aData);
-            //$('.dummy').html(settings.aoData[0]._aData.total_amount);
-
-            var api = this.api(), data;
-
-            // Remove the formatting to get integer data for summation
-            var intVal = function ( i ) {
-                return typeof i === 'string' ?
-                    i.replace(/[\$,]/g, '')*1 :
-                    typeof i === 'number' ?
-                        i : 0;
-            };
-
-            // Total over all pages
-            total = api
-                .column( 5 )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
-
-            // Total over this page
-            pageTotal = api
-                .column( 5, { page: 'current'} )
-                .data()
-                .reduce( function (a, b) {
-                    return intVal(a) + intVal(b);
-                }, 0 );
-
-            // // Update footer
-            // $( api.column( 5 ).footer() ).html(
-            //     '$'+pageTotal +' ( $'+ total +' total)'
-            // );
-
-            //$(this.footer()).html(pageTotal);
-
-          }
-        },
-        buttons: [
-            { extend: 'print', footer: true },
-            { extend: 'excelHtml5', footer: true },
-            { extend: 'csvHtml5', footer: true },
-            { extend: 'pdfHtml5', footer: true }
-        ],
-        scrollY:        200,
-        scrollCollapse: true,
-        paging:         true,
-        "columns": [
-          { "data": "duplicate_count" },
-          { "data": "category.fullname" },
-          { "data": "region.title" },
-          { "data": "care_of.username" },
-          { "data": "trader.username" },
-          { "data": "total_amount",
-            render: function(data,type,row){
-              return  (row.total_amount * row.duplicate_count);
-            }
-          },
-          { "data": "recieved_amount",
-            render: function(data,type,row){
-              return  (row.recieved_amount * row.duplicate_count);
-            }
-          },
-          { "data": "remaining_amount",
-            render: function(data,type,row){
-              return  (row.remaining_amount * row.duplicate_count);
-            }
-          },
-          { "data": "nature",
-             render:function (value) {
-              var nt = value;
-              return  nt[0].toUpperCase() + nt.slice(1);
-             }
-          },
-          { "data": "mode" },
-          { "data": "transaction_date",
-             "type": 'datetime',
-             render:function (value) {
-              var dt = new Date(value);
-              return dt.toLocaleDateString();
-            }
-          },
-          { "data": "target_date",
-             "type": 'datetime',
-             render:function (value) {
-              var dt = new Date(value);
-              return dt.toLocaleDateString();
-            }
-          }
-      ],
-    })
-
-
-});
-
-
-$('.js_t_search').on('change',function(){
-    //$('#transaction_search_form').submit();
-    var table = $('#b_table').DataTable();
-    table.ajax.reload();
-    table.ajax.url( "/homes/index.json?mode="+$('#mode').val()+"&tab="+"buying").load();
-
-});
-
-</script>
-<style>
-  .toolbar {
-     +"tabe=buying" float:left;
-  }
-  table tr td:first-letter{
-   text-transform:capitalize;
-  }
-</style>
-
-
-
-<script>
-$("div.toolbar").html('<b>Custom tool bar! Text/images etc.</b>');
-function filterGlobal () {
-    $('#b_table').DataTable().search(
-        $('#global_filter').val(),
-        $('#global_regex').prop('checked'),
-        $('#global_smart').prop('checked')
-    ).draw();
-}
-
-function filterColumn ( i ) {
-    $('#b_table').DataTable().column( i ).search(
-        $('#col'+i+'_filter').val(),
-        false,
-        true
-    ).draw();
-}
-
-$(document).ready(function() {
-    $('#b_table').DataTable();
-
-    $('input.column_filter').on( 'keyup click', function () {
-        filterColumn( $(this).parents('td').attr('data-column') );
-    } );
-} );
-
+        $.each($('.js-form-report'), function(i,v){
+          Rails.fire($(v)[0], 'submit');
+        });
+    });
+  });
 </script>

@@ -1,0 +1,31 @@
+<% transactions = Transaction.with_mode(mode).due %>
+<% data = transactions.report %>
+
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+			<h5 class='text-center label label-warning'><%=mode.humanize %></h5>
+			<%= form_tag dashboard_search_path, :method => 'get',:class => 'js-form-report', id: mode, data:{'mode':mode},remote: true do %>
+				<%= hidden_field_tag :mode,mode %>
+				<div class="row">
+				<div class="col-md-6" style="">
+					<small class='text-muted text-sm'>Date From</small><br>
+			   		<input class='search_from'type='date' name=<%= "start_"+mode %>><br>
+					<small class='text-muted'>Date To</small><br>
+			   		<input class='search_to' type='date' name=<%= "end_"+mode %>><br>
+		   		</div>
+		   		<div class="col-md-6">
+				<small class='text-muted'>C/O</small><br>
+		   		<%= select_tag "c_o_"+mode, options_from_collection_for_select(Person.all, "id", "username") , {:include_blank => 'choose ',class:'search_c_o', style: 'width:95%;'}%><br>
+				<small class='text-muted'>Trader</small><br>
+		      	<%= select_tag "trader_"+mode, options_from_collection_for_select(Person.all, "id", "username"), {:include_blank => 'choose ', class:'search_trader',style: 'width:95%;'} %>
+		      	</div>
+		      	</div>
+	  		<% end %>
+	</div>
+	<div class="panel-body" id='summary_<%=mode%>'>
+	  <%= render partial: 'summary', locals: {sellings:data[:sellings], buyings:data[:buyings], b_count:data[:b_count], s_count:data[:s_count]} %>
+	</div>
+</div>
+
+

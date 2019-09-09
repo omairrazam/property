@@ -4,6 +4,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web => '/sidekiq'
   #  get 'stocks/index'
   get '/stocks' => 'stocks#index', :as => :stocks
+  get '/dashboard_search' => 'homes#dashboard_search', :as => :dashboard_search
   get 'homes/index'
   
   resources :installments
@@ -16,7 +17,8 @@ Rails.application.routes.draw do
   resources :regions
   resources :categories
 
-
+  resources :people
+  
   devise_for :users, :skip => :registrations
   devise_scope :user do
   # resource :registration,

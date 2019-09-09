@@ -3,7 +3,7 @@ class NotificationMailer < ApplicationMailer
 
   def import_file_upload_email(hash)
     @results = hash
-    mail(to: "omsolutionpk@gmail.com", subject: 'File Import Updates')
+    mail(to: "syed_shahhussain@yahoo.com", cc: 'omsolutionpk@gmail.com',subject: 'File Import Updates')
   end
 
 end

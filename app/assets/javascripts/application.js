@@ -12,10 +12,12 @@
 //
 //= require rails-ujs
 //= require jquery
+//= require jquery-ui
 // require jquery_ujs
+//= require bootstrap-datepicker
 // require turbolinks
 //= require_tree .
-
+jQuery.noConflict();
 var datatableAjaxError = function (xhr, textStatus, errorThrown) {
     var msg = JSON.parse(xhr.responseText);
     var key = Object.keys(msg)[0];
@@ -23,3 +25,17 @@ var datatableAjaxError = function (xhr, textStatus, errorThrown) {
     alert(key+' : '+value);
 }
 
+
+
+$(document).ajaxError(function(event,xhr,options,exc) {
+
+    var errors = JSON.parse(xhr.responseText);
+    var er ="<ul>";
+    for(var i = 0; i < errors.length; i++){
+        var list = errors[i];
+        er += "<li>"+list+"</li>"
+    }
+    er+="</ul>"
+    $("#error_explanation").html(er);
+
+});

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20180101150739) do
+ActiveRecord::Schema.define(version: 20180105134250) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -95,6 +95,8 @@ ActiveRecord::Schema.define(version: 20180101150739) do
     t.datetime "transaction_date"
     t.bigint "care_of_id"
     t.bigint "trader_id"
+    t.text "comment"
+    t.integer "aggregate_recieved"
     t.index ["care_of_id"], name: "index_transactions_on_care_of_id"
     t.index ["category_id"], name: "index_transactions_on_category_id"
     t.index ["father_id"], name: "index_transactions_on_father_id"
